@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const facultyService = require("../services/faculty.service");
+const facultyService = require("./faculty.service");
 
 const isValidId = (id) => mongoose.isValidObjectId(id);
 
