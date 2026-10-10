@@ -19,22 +19,59 @@ const handleError = (res, error) => {
 
 exports.createStudent = async (req, res) => {
     try {
-        const { student_name, student_reg, section } = req.body;
+        const {
+            student_name,
+            student_reg,
+            student_department,
+            section
+        } = req.body;
 
-        if (!student_name?.trim() || !student_reg?.trim() || !section) {
+        if (
+            !student_name?.trim() ||
+            !student_reg?.trim() ||
+            !student_department ||
+            !section
+        ) {
             return res.status(400).json({
-                message: "student_name, student_reg and section are required"
+                message:
+                    "student_name, student_reg, student_department and section are required"
             });
         }
 
-        if (!validId(section)) {
-            return res.status(400).json({ message: "Invalid section ID" });
+        if (
+            !mongoose.isValidObjectId(student_department) ||
+            !mongoose.isValidObjectId(section)
+        ) {
+            return res.status(400).json({
+                message: "Invalid department or section ID"
+            });
         }
 
         const student = await service.createStudent(req.body);
-        res.status(201).json({ message: "Student created", data: student });
+
+        return res.status(201).json({
+            message: "Student created successfully",
+            data: student
+        });
     } catch (error) {
-        handleError(res, error);
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: "Student registration number already exists"
+            });
+        }
+
+        if (
+            error.name === "ValidationError" ||
+            error.name === "CastError"
+        ) {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
     }
 };
 
@@ -45,6 +82,19 @@ exports.getAllStudents = async (req, res) => {
         handleError(res, error);
     }
 };
+
+exports.getStudentBydepartment = async (req, res) => {
+    try {
+        if (!validId(req.params.departmentId)) {
+            return res.status(400).json({ message: "Invalid Department ID" });
+        }
+        
+        res.json({ data: await service.getStudentByDepartment(req.params.departmentId) })
+    }
+    catch (err) {
+        handleError(res, err);
+    }
+}
 
 exports.getStudentById = async (req, res) => {
     try {
