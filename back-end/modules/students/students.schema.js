@@ -7,6 +7,10 @@ const Students_Schema = new mongoose.Schema({
     student_reg: {
         type: String
     },
+    student_department: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "department"
+    },
     section: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "section"
