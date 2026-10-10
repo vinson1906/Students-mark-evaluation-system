@@ -2,6 +2,7 @@ const departmentService = require("./department.service");
 
 const createDepartment = async (req, res) => {
     try {
+        console.log(req.body)
         if (!req.body.department_name?.trim()) {
             return res.status(400).json({
                 success: false,
