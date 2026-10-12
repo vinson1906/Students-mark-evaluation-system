@@ -5,6 +5,8 @@ const connectDB = require("./config/db")
 
 const dotenv = require("dotenv")
 const DepartmentRouter = require("./modules/department/department.routes")
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 dotenv.config()
 connectDB()

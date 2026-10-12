@@ -1,7 +1,7 @@
 const express = require("express");
 const facultyRouter = express.Router();
 
-const facultyController = require("../controllers/faculty.controller");
+const facultyController = require("./faculty.controller");
 
 facultyRouter.post("/faculty/create", facultyController.createFaculty);
 
