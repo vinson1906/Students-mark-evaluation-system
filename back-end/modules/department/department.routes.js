@@ -6,7 +6,7 @@ const departmentController = require("./department.controller");
 DepartmentRouter.post("/department/create", departmentController.createDepartment);
 DepartmentRouter.get("/department/get", departmentController.getAllDepartments);
 DepartmentRouter.get("/department/get/:id", departmentController.getDepartmentById);
-DepartmentRouter.patch("/department/update/:id", departmentController.updateDepartment);
+DepartmentRouter.put("/department/update/:id", departmentController.updateDepartment);
 DepartmentRouter.delete("/department/delete/:id", departmentController.deleteDepartment);
 
 module.exports = DepartmentRouter;

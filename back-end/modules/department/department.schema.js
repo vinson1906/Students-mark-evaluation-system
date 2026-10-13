@@ -9,7 +9,10 @@ const Department_Schema = new mongoose.Schema({
     section: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "section"
-    }]
+    }],
+    code: {
+        type: String
+    }
 
 }, {
     timestamps: true
