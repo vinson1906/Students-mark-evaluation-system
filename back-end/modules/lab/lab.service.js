@@ -1,4 +1,4 @@
-const { Lab } = require("../models/Lab");
+const { Lab } = require("./lab.schema");
 
 const createLab = (data) => Lab.create(data);
 

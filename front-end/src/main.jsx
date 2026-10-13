@@ -1,19 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import { ToastProvider } from './context/ToastContext';
-import { AppDataProvider } from './context/AppDataContext';
-import { RouterProvider } from './context/RouterContext';
-import './index.css';
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+import {
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <ToastProvider>
-      <AppDataProvider>
-        <RouterProvider>
-          <App />
-        </RouterProvider>
-      </AppDataProvider>
-    </ToastProvider>
-  </React.StrictMode>,
-);
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+
+const queryClient = new QueryClient()
+
+createRoot(document.getElementById('root')).render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
+)

@@ -1,12 +1,20 @@
 const { Student } = require("./students.schema");
 
-const createStudent = (data) => Student.create(data);
+const createStudent = (data) => {
+    console.log(data);
 
-const getAllStudents = () =>
-    Student.find()
-        .populate("student_department")
-        .populate("section")
-        .populate("team");
+    return Student.create(data);
+}
+
+
+
+const getAllStudents = async () => {
+    return await Student.find()
+        .populate("student_department", "department_name code")
+        .populate("section", "section_name department year semester")
+        .populate("team", "team_name");
+};
+
 
 const getStudentById = (id) =>
     Student.findById(id)
@@ -22,7 +30,7 @@ const getStudentsBySection = (sectionId) =>
 
 const getStudentByDepartment = (departmentId) => {
     Student.find({ student_department: departmentId })
-        .populate("section")
+        .populate("section", "section_name")
         .populate("department")
         .populate("team")
 }

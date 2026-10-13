@@ -80,6 +80,9 @@ exports.getSectionsByDepartment = async (req, res) => {
 
 exports.updateSection = async (req, res) => {
     try {
+
+        console.log(req.params.id);
+
         if (!validId(req.params.id)) {
             return res.status(400).json({ message: "Invalid section ID" });
         }

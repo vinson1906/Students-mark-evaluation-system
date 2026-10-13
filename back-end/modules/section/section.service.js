@@ -1,11 +1,10 @@
 const { Section } = require("./section.schema");
-
+const { Department } = require("../department/department.schema")
+const { Student } = require("../students/students.schema")
 const createSection = (data) => Section.create(data);
 
 const getAllSections = () =>
-    Section.find()
-        .populate("department")
-        .populate("students");
+    Section.find().populate("department", "department_name code").populate("students");
 
 const getSectionById = (id) =>
     Section.findById(id)
