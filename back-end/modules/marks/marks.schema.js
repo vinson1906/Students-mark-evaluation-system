@@ -25,7 +25,7 @@ const evaluation_Schema = new mongoose.Schema({
 const Mark_Schema = new mongoose.Schema({
     student: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "student"
+        ref: "students"
     },
     team: {
         type: mongoose.Schema.Types.ObjectId,

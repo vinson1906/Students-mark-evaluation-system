@@ -8,6 +8,7 @@ const Section_Schema = new mongoose.Schema({
     },
     department: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "department",
         require: true
     },
     year: {

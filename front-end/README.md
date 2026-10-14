@@ -1,29 +1,16 @@
-# College Lab Evaluation System (frontend)
+# React + Vite
 
-React + Tailwind CSS admin dashboard. All data is mock data held in React state; there is no backend.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-```bash
-npm install
-npm run dev      # development server
-npm run build    # production build
-```
+Currently, two official plugins are available:
 
-## Structure
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-```
-src/
-  data/            mock*.js files (replace later)
-  services/        dataService.js - the only place that loads data / creates ids
-  context/         AppDataContext (state + CRUD), ToastContext, RouterContext (hash router)
-  components/      Sidebar, Topbar, StatCard, DataTable, StatusBadge, SearchFilter,
-                   FormModal, ConfirmDialog, EmptyState, ResourcePage, charts/...
-  pages/           one file per sidebar item
-```
+## React Compiler
 
-## Connecting your Express/MongoDB backend later
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-1. `services/dataService.js`: replace `loadAll()` with fetch/axios calls and load the result in `AppDataProvider` (add a loading state).
-2. `context/AppDataContext.jsx`: the `insert`, `patch` and `drop` helpers (and the custom student/team/marks actions) are the only places that change records. Swap them for POST/PUT/DELETE calls and update state from the response.
-3. Remove `generateObjectId()`; MongoDB assigns `_id`.
+## Expanding the ESLint configuration
 
-Records keep your supplied IDs and use `_id`, `departmentId`, `sectionId`, `teamId`, `labId`, `evaluatedBy` (a faculty `_id`) and `maxMarks`. Evaluations also carry an `evaluatedOn` date, used only for the "recent evaluations" list.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

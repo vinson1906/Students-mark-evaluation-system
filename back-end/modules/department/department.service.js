@@ -4,13 +4,28 @@ const { Section } = require("../section/section.schema");
 const createDepartment = async (data) => {
     return await Department.create({
         department_name: data.department_name,
+        code: data.code,
         section: data.section || [],
     });
 };
 
 const getAllDepartments = async () => {
-    return await Department.find()
-        .populate("section");
+  const departments = await Department.find().lean();
+
+  return Promise.all(
+    departments.map(async (department) => {
+      const sections = await Section.find({
+        department: department._id,
+      })
+        .select("section_name year semester")
+        .lean();
+
+      return {
+        ...department,
+        section: sections,
+      };
+    })
+  );
 };
 
 const getDepartmentById = async (id) => {
@@ -29,6 +44,9 @@ const updateDepartment = async (id, data) => {
                 ...(data.section !== undefined && {
                     section: data.section,
                 }),
+                ...(data.code !== undefined && {
+                    code: data.code
+                })
             },
         },
         {

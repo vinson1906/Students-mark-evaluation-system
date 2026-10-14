@@ -6,7 +6,7 @@ SectionRouter.post("/create", controller.createSection);
 SectionRouter.get("/get", controller.getAllSections);
 SectionRouter.get("/get/department/:departmentId", controller.getSectionsByDepartment);
 SectionRouter.get("/get/:id", controller.getSectionById);
-SectionRouter.patch("/update/:id", controller.updateSection);
+SectionRouter.put("/update/:id", controller.updateSection);
 SectionRouter.delete("/delete/:id", controller.deleteSection);
 
 module.exports = SectionRouter;
