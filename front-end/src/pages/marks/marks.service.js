@@ -48,7 +48,7 @@ export const deleteMarks = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (id) => {
-            const res = await axios.post(`${BASE_URL}/marks/delete/${id}`)
+            const res = await axios.delete(`${BASE_URL}/marks/delete/${id}`)
             return res.data
         },
         onSuccess: () => {

@@ -4,21 +4,16 @@ import Topbar from "../topbar/tob-bar";
 import { NAV_ITEMS } from "../../lib/navigation";
 
 export default function DashboardLayout({ pages = [] }) {
-    const [activeId, setActiveId] = useState(
-        NAV_ITEMS[0].id
-    );
-
+    const [activeId, setActiveId] = useState("overview");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const closeSidebar = useCallback(
-        () => setIsSidebarOpen(false),
-        []
-    );
+    const closeSidebar = useCallback(() => {
+        setIsSidebarOpen(false);
+    }, []);
 
-    const openSidebar = useCallback(
-        () => setIsSidebarOpen(true),
-        []
-    );
+    const openSidebar = useCallback(() => {
+        setIsSidebarOpen(true);
+    }, []);
 
     const handleSelect = useCallback((id) => {
         setActiveId(id);
@@ -32,6 +27,16 @@ export default function DashboardLayout({ pages = [] }) {
     const activePage = pages.find(
         (page) => page.id === activeId
     );
+
+    // Allows the Overview page to navigate using the existing sidebar state.
+    const handleNavigate = useCallback((id) => {
+        const pageExists = pages.some((page) => page.id === id);
+
+        if (pageExists) {
+            setActiveId(id);
+            setIsSidebarOpen(false);
+        }
+    }, [pages]);
 
     return (
         <div className="min-h-screen bg-[#F7F9FC]">
@@ -51,7 +56,14 @@ export default function DashboardLayout({ pages = [] }) {
 
                 <main className="min-w-0 flex-1 bg-[#F7F9FC] p-4 sm:p-6 lg:p-8">
                     {activePage ? (
-                        activePage.element
+                        activePage.id === "overview" ? (
+                            <activePage.element.type
+                                {...activePage.element.props}
+                                onNavigate={handleNavigate}
+                            />
+                        ) : (
+                            activePage.element
+                        )
                     ) : (
                         <h1 className="text-xl font-semibold">
                             Page not found
