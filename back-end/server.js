@@ -23,9 +23,9 @@ app.use(cors())
 app.use("/api", DepartmentRouter)
 app.use("/api/section", SectionRouter)
 app.use("/api/students", StudentRouter)
-app.use("/api/team", TeamRouter)
-app.use("/api/mark", MarkRouter)
-app.use("/api/lab", LabRouter)
+app.use("/api/teams", TeamRouter)
+app.use("/api/marks", MarkRouter)
+app.use("/api/labs", LabRouter)
 app.use("/api/faculty", facultyRouter)
 
 app.get("/api", (req, res) => {
