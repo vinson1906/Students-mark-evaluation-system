@@ -1,123 +1,32 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Modal,
-    TextInput,
     Select,
     Button,
     Group,
     NumberInput,
+    Loader,
 } from "@mantine/core";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import MarksTable from "./marks";
 
-const initialMarks = [
-    {
-        _id: "6ace50001cb9b2b76aa4ff01",
-        student: {
-            _id: "6acd40001cb9b2b76aa4ff01",
-            student_name: "Arun Kumar",
-            student_reg: "2026IT001",
-        },
-        team: {
-            _id: "6acc30001cb9b2b76aa4ff01",
-            team_name: "Team Alpha",
-            team_number: "T01",
-        },
-        lab: {
-            _id: "6ace60001cb9b2b76aa4ff01",
-            lab_name: "Web Development Lab",
-        },
-        evaluation: {
-            practical_execution: "18",
-            used_html: "9",
-            js_logics: "17",
-            css_responsiveness: "18",
-            viva: "8",
-            documendation: "9",
-        },
-        total_marks: "79",
-        maximum_marks: "100",
-        project_status: "COMPLETED",
-        evaluatedBy: {
-            _id: "6ace70001cb9b2b76aa4ff01",
-            faculty_name: "Dr. Priya",
-        },
-        createdAt: "2026-10-10T09:30:00.000Z",
-        updatedAt: "2026-10-10T09:30:00.000Z",
-    },
-    {
-        _id: "6ace50001cb9b2b76aa4ff02",
-        student: {
-            _id: "6acd40001cb9b2b76aa4ff02",
-            student_name: "Priya Devi",
-            student_reg: "2026IT002",
-        },
-        team: {
-            _id: "6acc30001cb9b2b76aa4ff01",
-            team_name: "Team Alpha",
-            team_number: "T01",
-        },
-        lab: {
-            _id: "6ace60001cb9b2b76aa4ff01",
-            lab_name: "Web Development Lab",
-        },
-        evaluation: {
-            practical_execution: "16",
-            used_html: "8",
-            js_logics: "15",
-            css_responsiveness: "17",
-            viva: "7",
-            documendation: "8",
-        },
-        total_marks: "71",
-        maximum_marks: "100",
-        project_status: "PENDING",
-        evaluatedBy: {
-            _id: "6ace70001cb9b2b76aa4ff01",
-            faculty_name: "Dr. Priya",
-        },
-        createdAt: "2026-10-10T10:00:00.000Z",
-        updatedAt: "2026-10-10T10:00:00.000Z",
-    },
-    {
-        _id: "6ace50001cb9b2b76aa4ff03",
-        student: {
-            _id: "6acd40001cb9b2b76aa4ff03",
-            student_name: "Karthik Raj",
-            student_reg: "2026EEE001",
-        },
-        team: {
-            _id: "6acc30001cb9b2b76aa4ff02",
-            team_name: "Team Beta",
-            team_number: "T02",
-        },
-        lab: {
-            _id: "6ace60001cb9b2b76aa4ff02",
-            lab_name: "Electronics Lab",
-        },
-        evaluation: {
-            practical_execution: "10",
-            used_html: "5",
-            js_logics: "9",
-            css_responsiveness: "8",
-            viva: "5",
-            documendation: "6",
-        },
-        total_marks: "43",
-        maximum_marks: "100",
-        project_status: "NOT_COMPLETED",
-        evaluatedBy: {
-            _id: "6ace70001cb9b2b76aa4ff02",
-            faculty_name: "Mr. Kumar",
-        },
-        createdAt: "2026-10-10T11:00:00.000Z",
-        updatedAt: "2026-10-10T11:00:00.000Z",
-    },
-];
+import {
+    getMarks,
+    createMarks,
+    updateMarks,
+    deleteMarks,
+} from "./marks.service";
+
+import { getFaculty } from "../staff/staff.service";
+import { getStudents } from "../student/students.service";
+import { getLabs } from "../lab/lab.service";
+import { getSection } from "../section/section.service";
 
 const emptyForm = {
     student: "",
-    team: "",
+    section: "",
     lab: "",
     practical_execution: 0,
     used_html: 0,
@@ -130,27 +39,6 @@ const emptyForm = {
     evaluatedBy: "",
 };
 
-const studentOptions = [
-    { value: "6acd40001cb9b2b76aa4ff01", label: "Arun Kumar (2026IT001)" },
-    { value: "6acd40001cb9b2b76aa4ff02", label: "Priya Devi (2026IT002)" },
-    { value: "6acd40001cb9b2b76aa4ff03", label: "Karthik Raj (2026EEE001)" },
-];
-
-const teamOptions = [
-    { value: "6acc30001cb9b2b76aa4ff01", label: "Team Alpha (T01)" },
-    { value: "6acc30001cb9b2b76aa4ff02", label: "Team Beta (T02)" },
-];
-
-const labOptions = [
-    { value: "6ace60001cb9b2b76aa4ff01", label: "Web Development Lab" },
-    { value: "6ace60001cb9b2b76aa4ff02", label: "Electronics Lab" },
-];
-
-const facultyOptions = [
-    { value: "6ace70001cb9b2b76aa4ff01", label: "Dr. Priya" },
-    { value: "6ace70001cb9b2b76aa4ff02", label: "Mr. Kumar" },
-];
-
 const evaluationFields = [
     { key: "practical_execution", label: "Practical Execution" },
     { key: "used_html", label: "HTML Usage" },
@@ -160,8 +48,101 @@ const evaluationFields = [
     { key: "documendation", label: "Documentation" },
 ];
 
+// Supports APIs returning either an array or { data: [...] }.
+const getArrayFromResponse = (response) => {
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.data?.data)) return response.data.data;
+    if (Array.isArray(response?.results)) return response.results;
+    return [];
+};
+
+// Handles populated documents and plain MongoDB ObjectId references.
+const getReferenceId = (reference) => {
+    if (!reference) return "";
+
+    if (typeof reference === "object") {
+        return String(reference._id || reference.id || "");
+    }
+
+    return String(reference);
+};
+
+const getReferenceName = (reference, fields = []) => {
+    if (!reference || typeof reference !== "object") return "";
+
+    for (const field of fields) {
+        if (reference[field]) return String(reference[field]);
+    }
+
+    return "";
+};
+
+const getErrorMessage = (error) =>
+    error?.response?.data?.message ||
+    error?.message ||
+    "Something went wrong. Please try again.";
+
 export const MarksPage = () => {
-    const [marks, setMarks] = useState(initialMarks);
+    const queryClient = useQueryClient();
+
+    // Queries
+    const {
+        data: marksResponse,
+        isLoading: marksLoading,
+        isError: marksIsError,
+        error: marksError,
+    } = getMarks();
+
+    const {
+        data: studentsResponse,
+        isLoading: studentsLoading,
+    } = getStudents();
+
+    const {
+        data: facultyResponse,
+        isLoading: facultyLoading,
+    } = getFaculty();
+
+    const {
+        data: labsResponse,
+        isLoading: labsLoading,
+    } = getLabs();
+
+    const {
+        data: sectionsResponse,
+        isLoading: sectionsLoading,
+    } = getSection();
+
+    // Mutations
+    const createMarksMutation = createMarks();
+    const updateMarksMutation = updateMarks();
+    const deleteMarksMutation = deleteMarks();
+
+    const marks = useMemo(
+        () => getArrayFromResponse(marksResponse),
+        [marksResponse]
+    );
+
+    const students = useMemo(
+        () => getArrayFromResponse(studentsResponse),
+        [studentsResponse]
+    );
+
+    const faculty = useMemo(
+        () => getArrayFromResponse(facultyResponse),
+        [facultyResponse]
+    );
+
+    const labs = useMemo(
+        () => getArrayFromResponse(labsResponse),
+        [labsResponse]
+    );
+
+    const sections = useMemo(
+        () => getArrayFromResponse(sectionsResponse),
+        [sectionsResponse]
+    );
 
     const [data, setData] = useState({
         form: { ...emptyForm },
@@ -172,18 +153,20 @@ export const MarksPage = () => {
         error: "",
     });
 
+    const [submitError, setSubmitError] = useState("");
+
     const updateData = (key, value) => {
-        setData((prev) => ({
-            ...prev,
+        setData((previous) => ({
+            ...previous,
             [key]: value,
         }));
     };
 
     const updateForm = (key, value) => {
-        setData((prev) => ({
-            ...prev,
+        setData((previous) => ({
+            ...previous,
             form: {
-                ...prev.form,
+                ...previous.form,
                 [key]: value,
             },
             error: "",
@@ -196,60 +179,152 @@ export const MarksPage = () => {
             0
         );
 
+    // Dropdown options are sourced from their respective APIs.
+    const studentOptions = useMemo(
+        () =>
+            students.map((student) => ({
+                value: String(student._id),
+                label: `${student.student_name || "Unnamed Student"}${student.student_reg ? ` (${student.student_reg})` : ""
+                    }`,
+            })),
+        [students]
+    );
+
+    const facultyOptions = useMemo(
+        () =>
+            faculty.map((member) => ({
+                value: String(member._id),
+                label: member.faculty_name || "Unnamed Faculty",
+            })),
+        [faculty]
+    );
+
+    const labOptions = useMemo(
+        () =>
+            labs.map((lab) => ({
+                value: String(lab._id),
+                label: lab.lab_name || "Unnamed Lab",
+            })),
+        [labs]
+    );
+
+    const sectionOptions = useMemo(
+        () =>
+            sections.map((section) => ({
+                value: String(section._id),
+                label: [
+                    section.section_name || "Unnamed Section",
+                    section.year ? `Year ${section.year}` : "",
+                    section.semester ? `Semester ${section.semester}` : "",
+                ]
+                    .filter(Boolean)
+                    .join(" - "),
+            })),
+        [sections]
+    );
+
+    // Find the selected student. Their team is derived from their Student document.
+    const selectedStudent = students.find(
+        (student) => String(student._id) === data.form.student
+    );
+
+    const selectedTeamId = getReferenceId(selectedStudent?.team);
+
     const resetForm = () => {
-        setData((prev) => ({
-            ...prev,
+        setData((previous) => ({
+            ...previous,
             form: { ...emptyForm },
             selectedMark: null,
             formOpened: false,
             error: "",
         }));
+        setSubmitError("");
     };
 
     const handleAdd = () => {
-        setData((prev) => ({
-            ...prev,
+        setData((previous) => ({
+            ...previous,
             form: { ...emptyForm },
             selectedMark: null,
             formOpened: true,
             error: "",
         }));
+        setSubmitError("");
     };
 
     const handleEdit = (mark) => {
-        setData((prev) => ({
-            ...prev,
+        const studentId = getReferenceId(mark.student);
+        const sectionId = getReferenceId(mark.section);
+
+        // Older mark records may not have a section field.
+        const student = students.find(
+            (item) => String(item._id) === studentId
+        );
+
+        setData((previous) => ({
+            ...previous,
             selectedMark: mark,
             form: {
-                student: mark.student?._id || "",
-                team: mark.team?._id || "",
-                lab: mark.lab?._id || "",
-                practical_execution: Number(mark.evaluation?.practical_execution) || 0,
+                student: studentId,
+                section:
+                    sectionId ||
+                    getReferenceId(student?.section),
+                lab: getReferenceId(mark.lab),
+                practical_execution:
+                    Number(mark.evaluation?.practical_execution) || 0,
                 used_html: Number(mark.evaluation?.used_html) || 0,
                 js_logics: Number(mark.evaluation?.js_logics) || 0,
-                css_responsiveness: Number(mark.evaluation?.css_responsiveness) || 0,
+                css_responsiveness:
+                    Number(mark.evaluation?.css_responsiveness) || 0,
                 viva: Number(mark.evaluation?.viva) || 0,
-                documendation: Number(mark.evaluation?.documendation) || 0,
+                documendation:
+                    Number(mark.evaluation?.documendation) || 0,
                 maximum_marks: Number(mark.maximum_marks) || 100,
                 project_status: mark.project_status || "PENDING",
-                evaluatedBy: mark.evaluatedBy?._id || "",
+                evaluatedBy: getReferenceId(mark.evaluatedBy),
             },
             formOpened: true,
             error: "",
         }));
+
+        setSubmitError("");
     };
 
-    const handleSubmit = () => {
-        const { form } = data;
+    const handleSubmit = async () => {
+        const { form, selectedMark } = data;
 
-        if (!form.student || !form.team || !form.lab || !form.evaluatedBy) {
-            updateData("error", "Please select the student, team, lab, and faculty.");
+        if (
+            !form.student ||
+            !form.section ||
+            !form.lab ||
+            !form.evaluatedBy
+        ) {
+            updateData(
+                "error",
+                "Please select the student, section, lab, and faculty."
+            );
             return;
         }
 
         const total = calculateTotal(form);
+        const maximumMarks = Number(form.maximum_marks);
 
-        if (total > Number(form.maximum_marks)) {
+        if (!Number.isFinite(maximumMarks) || maximumMarks <= 0) {
+            updateData("error", "Maximum marks must be greater than zero.");
+            return;
+        }
+
+        const invalidScore = evaluationFields.some((field) => {
+            const score = Number(form[field.key]);
+            return !Number.isFinite(score) || score < 0;
+        });
+
+        if (invalidScore) {
+            updateData("error", "Evaluation marks cannot be negative.");
+            return;
+        }
+
+        if (total > maximumMarks) {
             updateData(
                 "error",
                 "The total evaluation marks cannot exceed maximum marks."
@@ -257,91 +332,111 @@ export const MarksPage = () => {
             return;
         }
 
-        const student = studentOptions.find((item) => item.value === form.student);
-        const team = teamOptions.find((item) => item.value === form.team);
-        const lab = labOptions.find((item) => item.value === form.lab);
-        const faculty = facultyOptions.find(
-            (item) => item.value === form.evaluatedBy
+        const student = students.find(
+            (item) => String(item._id) === form.student
         );
 
-        const markRecord = {
-            student: {
-                _id: form.student,
-                student_name: student.label.split(" (")[0],
-                student_reg: student.label.match(/\((.*?)\)/)?.[1] || "",
-            },
-            team: {
-                _id: form.team,
-                team_name: team.label.split(" (")[0],
-                team_number: team.label.match(/\((.*?)\)/)?.[1] || "",
-            },
-            lab: {
-                _id: form.lab,
-                lab_name: lab.label,
-            },
-            evaluation: {
-                practical_execution: String(form.practical_execution),
-                used_html: String(form.used_html),
-                js_logics: String(form.js_logics),
-                css_responsiveness: String(form.css_responsiveness),
-                viva: String(form.viva),
-                documendation: String(form.documendation),
-            },
-            total_marks: String(total),
-            maximum_marks: String(form.maximum_marks),
-            project_status: form.project_status,
-            evaluatedBy: {
-                _id: form.evaluatedBy,
-                faculty_name: faculty.label,
-            },
-        };
-
-        if (data.selectedMark) {
-            setMarks((prev) =>
-                prev.map((mark) =>
-                    mark._id === data.selectedMark._id
-                        ? {
-                            ...mark,
-                            ...markRecord,
-                            updatedAt: new Date().toISOString(),
-                        }
-                        : mark
-                )
-            );
-        } else {
-            setMarks((prev) => [
-                ...prev,
-                {
-                    _id: crypto.randomUUID(),
-                    ...markRecord,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                },
-            ]);
+        if (!student) {
+            updateData("error", "Selected student was not found.");
+            return;
         }
 
-        resetForm();
+        const teamId = getReferenceId(student.team);
+
+        if (!teamId) {
+            updateData(
+                "error",
+                "The selected student has no team assigned. Assign the student to a team first."
+            );
+            return;
+        }
+
+        // Send IDs, not populated objects, to the backend.
+        const payload = {
+            student: form.student,
+            team: teamId,
+            section: form.section,
+            lab: form.lab,
+            evaluation: {
+                practical_execution: Number(form.practical_execution) || 0,
+                used_html: Number(form.used_html) || 0,
+                js_logics: Number(form.js_logics) || 0,
+                css_responsiveness:
+                    Number(form.css_responsiveness) || 0,
+                viva: Number(form.viva) || 0,
+                documendation: Number(form.documendation) || 0,
+            },
+            total_marks: total,
+            maximum_marks: maximumMarks,
+            project_status: form.project_status,
+            evaluatedBy: form.evaluatedBy,
+        };
+
+        try {
+            setSubmitError("");
+
+            if (selectedMark) {
+                await updateMarksMutation.mutateAsync({
+                    id: selectedMark._id,
+                    ...payload,
+                });
+            } else {
+                await createMarksMutation.mutateAsync(payload);
+            }
+
+            await queryClient.invalidateQueries({ queryKey: ["marks"] });
+            resetForm();
+        } catch (error) {
+            setSubmitError(getErrorMessage(error));
+        }
     };
 
-    const handleDeleteClick = (id) => {
-        setData((prev) => ({
-            ...prev,
+    const handleDeleteClick = (markOrId) => {
+        const id =
+            typeof markOrId === "object"
+                ? markOrId?._id
+                : markOrId;
+
+        if (!id) return;
+
+        setData((previous) => ({
+            ...previous,
             deleteId: id,
             deleteOpened: true,
         }));
     };
 
-    const handleDeleteConfirm = () => {
-        setMarks((prev) =>
-            prev.filter((mark) => mark._id !== data.deleteId)
-        );
+    const handleDeleteConfirm = async () => {
+        if (!data.deleteId) return;
 
-        setData((prev) => ({
-            ...prev,
-            deleteOpened: false,
-            deleteId: null,
-        }));
+        try {
+            setSubmitError("");
+
+            await deleteMarksMutation.mutateAsync(data.deleteId);
+
+            await queryClient.invalidateQueries({ queryKey: ["marks"] });
+
+            setData((previous) => ({
+                ...previous,
+                deleteOpened: false,
+                deleteId: null,
+            }));
+        } catch (error) {
+            setSubmitError(getErrorMessage(error));
+        }
     };
+
+    const isSubmitting =
+        createMarksMutation.isPending ||
+        updateMarksMutation.isPending;
+
+    const isDeleting = deleteMarksMutation.isPending;
+
+    const isOptionsLoading =
+        studentsLoading ||
+        facultyLoading ||
+        labsLoading ||
+        sectionsLoading;
 
     return (
         <>
@@ -353,12 +448,29 @@ export const MarksPage = () => {
                 <Button onClick={handleAdd}>Add Marks</Button>
             </div>
 
-            <MarksTable
-                data={marks}
-                onEdit={handleEdit}
-                onDelete={handleDeleteClick}
-            />
+            {submitError && (
+                <p className="mb-3 text-sm text-red-600">
+                    {submitError}
+                </p>
+            )}
 
+            {marksLoading ? (
+                <div className="flex justify-center py-10">
+                    <Loader />
+                </div>
+            ) : marksIsError ? (
+                <p className="py-5 text-red-600">
+                    {getErrorMessage(marksError)}
+                </p>
+            ) : (
+                <MarksTable
+                    data={marks}
+                    onEdit={handleEdit}
+                    onDelete={handleDeleteClick}
+                />
+            )}
+
+            {/* Add / Edit Marks */}
             <Modal
                 opened={data.formOpened}
                 onClose={resetForm}
@@ -366,131 +478,194 @@ export const MarksPage = () => {
                 centered
                 size="lg"
             >
-                <form
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        handleSubmit();
-                    }}
-                >
-                    <Select
-                        label="Student"
-                        placeholder="Select student"
-                        data={studentOptions}
-                        value={data.form.student}
-                        onChange={(value) => updateForm("student", value || "")}
-                        searchable
-                        required
-                        mb="md"
-                    />
-
-                    <Select
-                        label="Team"
-                        placeholder="Select team"
-                        data={teamOptions}
-                        value={data.form.team}
-                        onChange={(value) => updateForm("team", value || "")}
-                        required
-                        mb="md"
-                    />
-
-                    <Select
-                        label="Lab"
-                        placeholder="Select lab"
-                        data={labOptions}
-                        value={data.form.lab}
-                        onChange={(value) => updateForm("lab", value || "")}
-                        required
-                        mb="md"
-                    />
-
-                    <Select
-                        label="Evaluated By"
-                        placeholder="Select faculty"
-                        data={facultyOptions}
-                        value={data.form.evaluatedBy}
-                        onChange={(value) => updateForm("evaluatedBy", value || "")}
-                        required
-                        mb="md"
-                    />
-
-                    <h3 className="mb-3 mt-4 font-semibold">
-                        Evaluation Criteria
-                    </h3>
-
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        {evaluationFields.map((field) => (
-                            <NumberInput
-                                key={field.key}
-                                label={field.label}
-                                min={0}
-                                max={Number(data.form.maximum_marks)}
-                                value={data.form[field.key]}
-                                onChange={(value) =>
-                                    updateForm(field.key, value || 0)
-                                }
-                                required
-                            />
-                        ))}
+                {isOptionsLoading ? (
+                    <div className="flex justify-center py-8">
+                        <Loader />
                     </div>
+                ) : (
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            handleSubmit();
+                        }}
+                    >
+                        <Select
+                            label="Student"
+                            placeholder="Select student"
+                            data={studentOptions}
+                            value={data.form.student}
+                            onChange={(value) => {
+                                updateForm("student", value || "");
 
-                    <NumberInput
-                        className="mt-4"
-                        label="Maximum Marks"
-                        min={1}
-                        value={data.form.maximum_marks}
-                        onChange={(value) =>
-                            updateForm("maximum_marks", value || 1)
-                        }
-                        required
-                    />
+                                // Keep section in sync with the selected student.
+                                const student = students.find(
+                                    (item) => String(item._id) === value
+                                );
 
-                    <div className="my-3 rounded-md bg-gray-100 p-3">
-                        <span className="font-semibold">Calculated Total: </span>
-                        {calculateTotal(data.form)} / {data.form.maximum_marks}
-                    </div>
+                                const studentSectionId = getReferenceId(
+                                    student?.section
+                                );
 
-                    <Select
-                        label="Project Status"
-                        data={[
-                            { value: "COMPLETED", label: "Completed" },
-                            { value: "NOT_COMPLETED", label: "Not Completed" },
-                            { value: "PENDING", label: "Pending" },
-                        ]}
-                        value={data.form.project_status}
-                        onChange={(value) =>
-                            updateForm("project_status", value || "PENDING")
-                        }
-                        required
-                        mb="md"
-                    />
+                                updateForm("section", studentSectionId);
+                            }}
+                            searchable
+                            required
+                            mb="md"
+                        />
 
-                    {data.error && (
-                        <p className="mb-3 text-sm text-red-600">
-                            {data.error}
-                        </p>
-                    )}
+                        <Select
+                            label="Section"
+                            placeholder="Select section"
+                            data={sectionOptions}
+                            value={data.form.section}
+                            onChange={(value) =>
+                                updateForm("section", value || "")
+                            }
+                            searchable
+                            required
+                            mb="md"
+                        />
 
-                    <Group justify="flex-end" mt="md">
-                        <Button
-                            variant="default"
-                            type="button"
-                            onClick={resetForm}
-                        >
-                            Cancel
-                        </Button>
+                        <Select
+                            label="Lab"
+                            placeholder="Select lab"
+                            data={labOptions}
+                            value={data.form.lab}
+                            onChange={(value) =>
+                                updateForm("lab", value || "")
+                            }
+                            searchable
+                            required
+                            mb="md"
+                        />
 
-                        <Button type="submit">
-                            {data.selectedMark ? "Update Marks" : "Save Marks"}
-                        </Button>
-                    </Group>
-                </form>
+                        <Select
+                            label="Evaluated By"
+                            placeholder="Select faculty"
+                            data={facultyOptions}
+                            value={data.form.evaluatedBy}
+                            onChange={(value) =>
+                                updateForm("evaluatedBy", value || "")
+                            }
+                            searchable
+                            required
+                            mb="md"
+                        />
+
+                        <div className="mb-3 rounded-md bg-gray-50 p-3">
+                            <p className="text-sm text-gray-600">
+                                Team is taken automatically from the selected
+                                student's team assignment.
+                            </p>
+
+                            <p className="mt-1 font-medium">
+                                {getReferenceName(selectedStudent?.team, [
+                                    "team_name",
+                                ]) || (selectedTeamId ? "Team assigned" : "No team assigned")}
+                            </p>
+                        </div>
+
+                        <h3 className="mb-3 mt-4 font-semibold">
+                            Evaluation Criteria
+                        </h3>
+
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            {evaluationFields.map((field) => (
+                                <NumberInput
+                                    key={field.key}
+                                    label={field.label}
+                                    min={0}
+                                    value={data.form[field.key]}
+                                    onChange={(value) =>
+                                        updateForm(field.key, value ?? 0)
+                                    }
+                                    required
+                                />
+                            ))}
+                        </div>
+
+                        <NumberInput
+                            className="mt-4"
+                            label="Maximum Marks"
+                            min={1}
+                            value={data.form.maximum_marks}
+                            onChange={(value) =>
+                                updateForm("maximum_marks", value ?? 1)
+                            }
+                            required
+                        />
+
+                        <div className="my-3 rounded-md bg-gray-100 p-3">
+                            <span className="font-semibold">
+                                Calculated Total:{" "}
+                            </span>
+                            {calculateTotal(data.form)} /{" "}
+                            {data.form.maximum_marks}
+                        </div>
+
+                        <Select
+                            label="Project Status"
+                            data={[
+                                { value: "COMPLETED", label: "Completed" },
+                                {
+                                    value: "NOT_COMPLETED",
+                                    label: "Not Completed",
+                                },
+                                { value: "PENDING", label: "Pending" },
+                            ]}
+                            value={data.form.project_status}
+                            onChange={(value) =>
+                                updateForm(
+                                    "project_status",
+                                    value || "PENDING"
+                                )
+                            }
+                            required
+                            mb="md"
+                        />
+
+                        {data.error && (
+                            <p className="mb-3 text-sm text-red-600">
+                                {data.error}
+                            </p>
+                        )}
+
+                        {submitError && (
+                            <p className="mb-3 text-sm text-red-600">
+                                {submitError}
+                            </p>
+                        )}
+
+                        <Group justify="flex-end" mt="md">
+                            <Button
+                                variant="default"
+                                type="button"
+                                onClick={resetForm}
+                                disabled={isSubmitting}
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                type="submit"
+                                loading={isSubmitting}
+                                disabled={isOptionsLoading}
+                            >
+                                {data.selectedMark
+                                    ? "Update Marks"
+                                    : "Save Marks"}
+                            </Button>
+                        </Group>
+                    </form>
+                )}
             </Modal>
 
+            {/* Delete Confirmation */}
             <Modal
                 opened={data.deleteOpened}
                 onClose={() =>
-                    setData((prev) => ({
-                        ...prev,
+                    setData((previous) => ({
+                        ...previous,
                         deleteOpened: false,
                         deleteId: null,
                     }))
@@ -506,9 +681,10 @@ export const MarksPage = () => {
                 <Group justify="flex-end">
                     <Button
                         variant="default"
+                        disabled={isDeleting}
                         onClick={() =>
-                            setData((prev) => ({
-                                ...prev,
+                            setData((previous) => ({
+                                ...previous,
                                 deleteOpened: false,
                                 deleteId: null,
                             }))
@@ -517,7 +693,11 @@ export const MarksPage = () => {
                         Cancel
                     </Button>
 
-                    <Button color="red" onClick={handleDeleteConfirm}>
+                    <Button
+                        color="red"
+                        loading={isDeleting}
+                        onClick={handleDeleteConfirm}
+                    >
                         Delete
                     </Button>
                 </Group>
@@ -525,3 +705,5 @@ export const MarksPage = () => {
         </>
     );
 };
+
+export default MarksPage;

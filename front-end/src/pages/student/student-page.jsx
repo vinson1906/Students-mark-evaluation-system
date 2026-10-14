@@ -18,20 +18,21 @@ import {
 
 import { getDepartment } from "../department/department.service";
 import { getSection } from "../section/section.service";
+import { getTeams } from "../teams/team.service";
 
 // Team demo data — unchanged until the Team API is ready.
-const teamOptions = [
-    {
-        value: "6acc30001cb9b2b76aa4ff01",
-        label: "Team Alpha",
-        sectionId: "6acb10001cb9b2b76aa4ff01",
-    },
-    {
-        value: "6acc30001cb9b2b76aa4ff02",
-        label: "Team Beta",
-        sectionId: "6acb10001cb9b2b76aa4ff03",
-    },
-];
+// const teamOptions = [
+//     {
+//         value: "6acc30001cb9b2b76aa4ff01",
+//         label: "Team Alpha",
+//         sectionId: "6acb10001cb9b2b76aa4ff01",
+//     },
+//     {
+//         value: "6acc30001cb9b2b76aa4ff02",
+//         label: "Team Beta",
+//         sectionId: "6acb10001cb9b2b76aa4ff03",
+//     },
+// ];
 
 const emptyForm = {
     student_name: "",
@@ -86,6 +87,13 @@ export const StudentPage = () => {
         isError: sectionsError,
     } = getSection();
 
+    //Get Teams 
+    const {
+        data: getTeamsData,
+        isLoading: teamsLoading,
+        isError: teamsError
+    } = getTeams()
+
     // CREATE, UPDATE, DELETE mutations
     const createMutation = createStudents();
     const updateMutation = updateStudent();
@@ -94,12 +102,20 @@ export const StudentPage = () => {
     const students = getArrayFromResponse(studentsResponse);
     const departments = getArrayFromResponse(departmentsResponse);
     const sections = getArrayFromResponse(sectionsResponse);
+    const team = getArrayFromResponse(getTeamsData)
 
     // Dynamic department options from API
     const departmentOptions = departments.map((department) => ({
         value: String(department._id),
         label: department.department_name,
     }));
+
+    //dynamic teams option from API
+    const teamOptions = team.map((team) => ({
+        value: String(team._id),
+        label: team.team_name,
+        sectionId: team.section._id
+    }))
 
     // Dynamic section options from API
     // Supports section.department as an ID or populated object.

@@ -30,14 +30,16 @@ exports.createLab = async (req, res) => {
         const {
             department,
             lab_name,
-            academic_year,
+            acadamic_year,
             maximum_mark
         } = req.body;
+
+        console.log(req.body, department)
 
         if (
             !department ||
             !lab_name?.trim() ||
-            !academic_year ||
+            !acadamic_year ||
             maximum_mark === undefined
         ) {
             return res.status(400).json({
@@ -63,8 +65,8 @@ exports.createLab = async (req, res) => {
 
         const lab = await service.createLab({
             department,
+            acadamic_year,
             lab_name,
-            academic_year,
             maximum_mark
         });
 
@@ -148,7 +150,7 @@ exports.updateLab = async (req, res) => {
         const allowedFields = [
             "department",
             "lab_name",
-            "academic_year",
+            "acadamic_year",
             "maximum_mark"
         ];
 

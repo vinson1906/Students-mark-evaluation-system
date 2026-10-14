@@ -1,6 +1,11 @@
 const { Lab } = require("./lab.schema");
 
-const createLab = (data) => Lab.create(data);
+const createLab = (data) => {
+    console.log(data);
+
+    const res = Lab.create(data)
+    return res
+};
 
 const getAllLabs = () =>
     Lab.find().populate("department");

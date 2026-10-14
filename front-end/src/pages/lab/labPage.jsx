@@ -1,72 +1,36 @@
 import React, { useState } from "react";
-import { Modal, TextInput, Select, Button, Group, NumberInput } from "@mantine/core";
+import {
+    Modal,
+    TextInput,
+    Select,
+    Button,
+    Group,
+    NumberInput,
+    Alert,
+    Loader,
+} from "@mantine/core";
 
 import LabTable from "./lab";
 
-export const labMockData = [
-    {
-        _id: "6acd10001cb9b2b76aa4ff01",
-        lab_name: "Web Development Lab",
-        department: {
-            _id: "6ac9fbb31cb9b2b76aa4ff3d",
-            department_name: "Computer Science Engineering",
-        },
-        acadamic_year: "2026-2027",
-        maximum_mark: "100",
-    },
-    {
-        _id: "6acd10001cb9b2b76aa4ff02",
-        lab_name: "Database Management Systems Lab",
-        department: {
-            _id: "6ac9fbb31cb9b2b76aa4ff3d",
-            department_name: "Computer Science Engineering",
-        },
-        acadamic_year: "2026-2027",
-        maximum_mark: "100",
-    },
-    {
-        _id: "6acd10001cb9b2b76aa4ff03",
-        lab_name: "Java Programming Lab",
-        department: {
-            _id: "6ac9fbb31cb9b2b76aa4ff3d",
-            department_name: "Computer Science Engineering",
-        },
-        acadamic_year: "2026-2027",
-        maximum_mark: "100",
-    },
-    {
-        _id: "6acd10001cb9b2b76aa4ff04",
-        lab_name: "Electrical Machines Lab",
-        department: {
-            _id: "6ac9fc571cb9b2b76aa4ff3e",
-            department_name: "Electrical and Electronics Engineering",
-        },
-        acadamic_year: "2026-2027",
-        maximum_mark: "100",
-    },
-    {
-        _id: "6acd10001cb9b2b76aa4ff05",
-        lab_name: "Power Electronics Lab",
-        department: {
-            _id: "6ac9fc571cb9b2b76aa4ff3e",
-            department_name: "Electrical and Electronics Engineering",
-        },
-        acadamic_year: "2026-2027",
-        maximum_mark: "100",
-    },
-];
+import {
+    getLabs,
+    createLabs,
+    upadteLabs,
+    deletelabs,
+} from "./lab.service";
 
+import { getDepartment } from "../department/department.service";
+
+const initialForm = {
+    lab_name: "",
+    department: "",
+    acadamic_year: "",
+    maximum_mark: 100,
+};
 
 export const LabPage = () => {
-    const [labs, setLabs] = useState(labMockData);
-
     const [data, setData] = useState({
-        form: {
-            lab_name: "",
-            department: "",
-            acadamic_year: "",
-            maximum_mark: 100,
-        },
+        form: { ...initialForm },
         selectedLab: null,
         formOpened: false,
         deleteOpened: false,
@@ -74,73 +38,106 @@ export const LabPage = () => {
         error: "",
     });
 
-    const departments = [
-        {
-            value: "6ac9fbb31cb9b2b76aa4ff3d",
-            label: "Computer Science Engineering",
-        },
-        {
-            value: "6ac9fc571cb9b2b76aa4ff3e",
-            label: "Electrical and Electronics Engineering",
-        },
-    ];
+    // Fetch labs
+    const {
+        data: labsResponse,
+        isLoading: labsLoading,
+        isError: labsError,
+        error: labsErrorDetails,
+    } = getLabs();
 
+    // Fetch departments
+    const {
+        data: departmentResponse,
+        isLoading: departmentLoading,
+        isError: departmentError,
+    } = getDepartment();
+
+    // Mutations
+    const createLabsMutation = createLabs();
+    const updateLabsMutation = upadteLabs();
+    const deleteLabsMutation = deletelabs();
+
+    // Safely extract arrays from API responses
+    const getArrayFromResponse = (response) => {
+        if (Array.isArray(response?.data)) {
+            return response.data;
+        }
+
+        if (Array.isArray(response)) {
+            return response;
+        }
+
+        return [];
+    };
+
+    const labs = getArrayFromResponse(labsResponse);
+    const departmentsList = getArrayFromResponse(departmentResponse);
+
+    const departments = departmentsList.map((department) => ({
+        value: String(department._id),
+        label: department.department_name,
+    }));
+
+    const saving =
+        createLabsMutation.isPending || updateLabsMutation.isPending;
+
+    // Update modal state
     const updateData = (key, value) => {
-        setData((prev) => ({
-            ...prev,
+        setData((previous) => ({
+            ...previous,
             [key]: value,
         }));
     };
 
+    // Update form fields
     const updateForm = (key, value) => {
-        setData((prev) => ({
-            ...prev,
+        setData((previous) => ({
+            ...previous,
             form: {
-                ...prev.form,
+                ...previous.form,
                 [key]: value,
             },
             error: "",
         }));
     };
 
+    // Reset form and close modal
     const resetForm = () => {
-        setData((prev) => ({
-            ...prev,
-            form: {
-                lab_name: "",
-                department: "",
-                acadamic_year: "",
-                maximum_mark: 100,
-            },
+        setData((previous) => ({
+            ...previous,
+            form: { ...initialForm },
             selectedLab: null,
             formOpened: false,
             error: "",
         }));
     };
 
+    // Open create modal
     const handleAdd = () => {
-        setData((prev) => ({
-            ...prev,
-            form: {
-                lab_name: "",
-                department: "",
-                acadamic_year: "",
-                maximum_mark: 100,
-            },
+        setData((previous) => ({
+            ...previous,
+            form: { ...initialForm },
             selectedLab: null,
             formOpened: true,
             error: "",
         }));
     };
 
+    // Open edit modal
     const handleEdit = (lab) => {
-        setData((prev) => ({
-            ...prev,
+        const departmentId =
+            lab.department && typeof lab.department === "object"
+                ? String(lab.department._id || "")
+                : String(lab.department || "");
+
+        setData((previous) => ({
+            ...previous,
             selectedLab: lab,
             form: {
-                lab_name: lab.lab_name,
-                department: lab.department?._id || "",
-                acadamic_year: lab.acadamic_year,
+                lab_name: lab.lab_name || "",
+                department: departmentId,
+                acadamic_year: lab.acadamic_year || "",
                 maximum_mark: Number(lab.maximum_mark) || 100,
             },
             formOpened: true,
@@ -148,98 +145,149 @@ export const LabPage = () => {
         }));
     };
 
-    const handleSubmit = () => {
-        const { lab_name, department, acadamic_year, maximum_mark } = data.form;
+    // Create or update lab using backend mutations
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-        if (!lab_name.trim() || !department || !acadamic_year.trim()) {
+        const {
+            lab_name,
+            department,
+            acadamic_year,
+            maximum_mark,
+        } = data.form;
+
+        if (
+            !lab_name.trim() ||
+            !department ||
+            !acadamic_year.trim()
+        ) {
             updateData("error", "Please fill in all required fields.");
             return;
         }
 
-        if (!maximum_mark || maximum_mark <= 0) {
+        if (
+            maximum_mark === "" ||
+            maximum_mark === null ||
+            maximum_mark === undefined ||
+            Number(maximum_mark) <= 0
+        ) {
             updateData("error", "Maximum marks must be greater than zero.");
             return;
         }
 
-        const selectedDepartment = departments.find(
-            (item) => item.value === department
-        );
-
-        const labData = {
+        const labPayload = {
             lab_name: lab_name.trim(),
-            department: {
-                _id: selectedDepartment.value,
-                department_name: selectedDepartment.label,
-            },
+
+            // Send the MongoDB ObjectId, not a department object
+            department,
+
             acadamic_year: acadamic_year.trim(),
-            maximum_mark: String(maximum_mark),
+            maximum_mark: Number(maximum_mark),
         };
 
-        if (data.selectedLab) {
-            setLabs((prev) =>
-                prev.map((lab) =>
-                    lab._id === data.selectedLab._id
-                        ? { ...lab, ...labData }
-                        : lab
-                )
-            );
-        } else {
-            setLabs((prev) => [
-                ...prev,
-                {
-                    _id: crypto.randomUUID(),
-                    ...labData,
-                },
-            ]);
-        }
+        try {
+            if (data.selectedLab) {
+                // UPDATE
+                await updateLabsMutation.mutateAsync({
+                    id: data.selectedLab._id,
+                    ...labPayload,
+                });
+            } else {
+                // CREATE
+                await createLabsMutation.mutateAsync(labPayload);
+            }
 
-        resetForm();
+            resetForm();
+        } catch (error) {
+            updateData(
+                "error",
+                error?.response?.data?.message ||
+                error?.message ||
+                "Unable to save the lab. Please try again."
+            );
+        }
     };
 
+    // Open delete confirmation modal
     const handleDeleteClick = (id) => {
         updateData("deleteId", id);
         updateData("deleteOpened", true);
     };
 
-    const handleDeleteConfirm = () => {
-        setLabs((prev) => prev.filter((lab) => lab._id !== data.deleteId));
+    // Delete lab using backend mutation
+    const handleDeleteConfirm = async () => {
+        if (!data.deleteId) return;
 
-        setData((prev) => ({
-            ...prev,
-            deleteOpened: false,
-            deleteId: null,
-        }));
+        try {
+            await deleteLabsMutation.mutateAsync(data.deleteId);
+
+            setData((previous) => ({
+                ...previous,
+                deleteOpened: false,
+                deleteId: null,
+                error: "",
+            }));
+        } catch (error) {
+            setData((previous) => ({
+                ...previous,
+                error:
+                    error?.response?.data?.message ||
+                    error?.message ||
+                    "Unable to delete the lab. Please try again.",
+            }));
+        }
     };
 
     return (
         <>
+            {/* Page header */}
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold">Lab Management</h2>
+                <div>
+                    <h2 className="text-xl font-bold">Lab Management</h2>
+                    <p className="text-sm text-gray-500">
+                        Manage laboratories and their academic details.
+                    </p>
+                </div>
 
-                <Button onClick={handleAdd}>
-                    Add Lab
-                </Button>
+                <Button onClick={handleAdd}>Add Lab</Button>
             </div>
 
-            <LabTable
-                data={labs}
-                onEdit={handleEdit}
-                onDelete={handleDeleteClick}
-            />
+            {/* Lab list */}
+            {labsLoading ? (
+                <div className="flex items-center gap-2 py-8">
+                    <Loader size="sm" />
+                    <span>Loading labs...</span>
+                </div>
+            ) : labsError ? (
+                <Alert color="red" title="Failed to load labs">
+                    {labsErrorDetails?.message || "Please check your backend API."}
+                </Alert>
+            ) : (
+                <LabTable
+                    data={labs}
+                    onEdit={handleEdit}
+                    onDelete={handleDeleteClick}
+                />
+            )}
 
-            {/* Add / Edit Lab Modal */}
+            {/* Add / Edit modal */}
             <Modal
                 opened={data.formOpened}
-                onClose={resetForm}
+                onClose={() => {
+                    if (!saving) resetForm();
+                }}
                 title={data.selectedLab ? "Edit Lab" : "Add Lab"}
                 centered
+                closeOnClickOutside={!saving}
+                closeOnEscape={!saving}
             >
-                <form
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        handleSubmit();
-                    }}
-                >
+                <form onSubmit={handleSubmit}>
+                    {data.error && (
+                        <Alert color="red" mb="md" title="Error">
+                            {data.error}
+                        </Alert>
+                    )}
+
                     <TextInput
                         label="Lab Name"
                         placeholder="Enter lab name"
@@ -253,15 +301,28 @@ export const LabPage = () => {
 
                     <Select
                         label="Department"
-                        placeholder="Select department"
+                        placeholder={
+                            departmentLoading
+                                ? "Loading departments..."
+                                : "Select department"
+                        }
                         data={departments}
-                        value={data.form.department}
+                        value={data.form.department || null}
                         onChange={(value) =>
                             updateForm("department", value || "")
                         }
+                        disabled={departmentLoading || departmentError}
+                        searchable
                         required
+                        nothingFoundMessage="No departments found"
                         mb="md"
                     />
+
+                    {departmentError && (
+                        <Alert color="red" mb="md">
+                            Failed to load departments. Please refresh and try again.
+                        </Alert>
+                    )}
 
                     <TextInput
                         label="Academic Year"
@@ -286,61 +347,70 @@ export const LabPage = () => {
                         mb="md"
                     />
 
-                    {data.error && (
-                        <p className="mb-3 text-sm text-red-600">
-                            {data.error}
-                        </p>
-                    )}
-
-                    <Group justify="flex-end">
+                    <Group justify="flex-end" mt="lg">
                         <Button
                             variant="default"
-                            onClick={resetForm}
                             type="button"
+                            onClick={resetForm}
+                            disabled={saving}
                         >
                             Cancel
                         </Button>
 
-                        <Button type="submit">
-                            {data.selectedLab ? "Update Lab" : "Add Lab"}
+                        <Button type="submit" loading={saving}>
+                            {data.selectedLab ? "Update Lab" : "Create Lab"}
                         </Button>
                     </Group>
                 </form>
             </Modal>
 
-            {/* Delete Confirmation Modal */}
+            {/* Delete confirmation modal */}
             <Modal
                 opened={data.deleteOpened}
                 onClose={() => {
-                    setData((prev) => ({
-                        ...prev,
-                        deleteOpened: false,
-                        deleteId: null,
-                    }));
+                    if (!deleteLabsMutation.isPending) {
+                        setData((previous) => ({
+                            ...previous,
+                            deleteOpened: false,
+                            deleteId: null,
+                        }));
+                    }
                 }}
                 title="Delete Lab"
                 centered
                 size="sm"
             >
-                <p className="mb-4">
-                    Are you sure you want to delete this lab?
+                <p className="mb-4 text-sm text-gray-600">
+                    Are you sure you want to delete this lab? This action cannot be
+                    undone.
                 </p>
+
+                {data.error && (
+                    <Alert color="red" mb="md">
+                        {data.error}
+                    </Alert>
+                )}
 
                 <Group justify="flex-end">
                     <Button
                         variant="default"
                         onClick={() => {
-                            setData((prev) => ({
-                                ...prev,
+                            setData((previous) => ({
+                                ...previous,
                                 deleteOpened: false,
                                 deleteId: null,
                             }));
                         }}
+                        disabled={deleteLabsMutation.isPending}
                     >
                         Cancel
                     </Button>
 
-                    <Button color="red" onClick={handleDeleteConfirm}>
+                    <Button
+                        color="red"
+                        onClick={handleDeleteConfirm}
+                        loading={deleteLabsMutation.isPending}
+                    >
                         Delete
                     </Button>
                 </Group>

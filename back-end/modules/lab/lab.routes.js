@@ -10,7 +10,7 @@ LabRouter.get(
     labController.getLabsByDepartment
 );
 LabRouter.get("/get/:id", labController.getLabById);
-LabRouter.patch("/update/:id", labController.updateLab);
+LabRouter.put("/update/:id", labController.updateLab);
 LabRouter.delete("/delete/:id", labController.deleteLab);
 
 module.exports = LabRouter;
