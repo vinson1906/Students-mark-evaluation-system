@@ -12,7 +12,7 @@ export default function Sidebar({
     isOpen,
     onClose,
 }) {
-    
+
     useEffect(() => {
         if (!isOpen) return;
 
@@ -53,7 +53,7 @@ export default function Sidebar({
                         </div>
                         <div className="leading-tight">
                             <p className="text-[15px] font-semibold tracking-tight text-white">
-                                CampusHub
+                                Student Mark Evaluvation System
                             </p>
                             <p className="text-[11px] text-slate-400">
                                 Academic Administration
@@ -86,14 +86,14 @@ export default function Sidebar({
                                         onClick={() => onSelect(id)}
                                         aria-current={isActive ? "page" : undefined}
                                         className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${isActive
-                                                ? "bg-[#2563EB] text-white shadow-md shadow-blue-900/30"
-                                                : "text-slate-300 hover:bg-white/[0.07] hover:text-white"
+                                            ? "bg-[#2563EB] text-white shadow-md shadow-blue-900/30"
+                                            : "text-slate-300 hover:bg-white/[0.07] hover:text-white"
                                             }`}
                                     >
                                         <Icon
                                             className={`h-[18px] w-[18px] shrink-0 transition-colors ${isActive
-                                                    ? "text-white"
-                                                    : "text-slate-400 group-hover:text-white"
+                                                ? "text-white"
+                                                : "text-slate-400 group-hover:text-white"
                                                 }`}
                                             aria-hidden="true"
                                         />

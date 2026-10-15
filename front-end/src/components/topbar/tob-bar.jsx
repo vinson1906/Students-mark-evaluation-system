@@ -51,10 +51,10 @@ export default function Topbar({ title, onMenuClick }) {
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2563EB] text-sm font-semibold text-white"
                         aria-hidden="true"
                     >
-                        AU
+                        SMES
                     </div>
                     <div className="hidden text-left leading-tight sm:block">
-                        <p className="text-sm font-semibold text-[#111D36]">Admin User</p>
+                        <p className="text-sm font-semibold text-[#111D36]">Admin</p>
                         <p className="text-xs text-slate-500">Administrator</p>
                     </div>
                 </div>
