@@ -3,6 +3,7 @@ const service = require("./student.service");
 
 const validId = (id) => mongoose.isValidObjectId(id);
 
+
 const handleError = (res, error) => {
     if (error.code === 11000) {
         return res.status(409).json({
@@ -83,12 +84,20 @@ exports.getAllStudents = async (req, res) => {
     }
 };
 
+exports.BulkUploadController = async (req, res) => {
+    try {
+        res.json({ data: await service.Bulk_upload() });
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
 exports.getStudentBydepartment = async (req, res) => {
     try {
         if (!validId(req.params.departmentId)) {
             return res.status(400).json({ message: "Invalid Department ID" });
         }
-        
+
         res.json({ data: await service.getStudentByDepartment(req.params.departmentId) })
     }
     catch (err) {

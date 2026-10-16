@@ -1,3 +1,5 @@
+const { students } = require("./data");
+
 const { Student } = require("./students.schema");
 
 const createStudent = (data) => Student.create(data);
@@ -37,6 +39,42 @@ const updateStudent = (id, data) =>
 
 const deleteStudent = (id) => Student.findByIdAndDelete(id);
 
+
+const DEPARTMENT_ID = "6ad1ba5bed26f3c3fbd189cb";
+const SECTION_ID = "6ad1ba74ed26f3c3fbd189cc";
+
+const Bulk_upload = async() => {
+
+    let added = 0, skipped = 0, failed = 0;
+
+    for (const s of students) {
+        try {
+            const exists = await Student.findOne({ student_reg: s.student_reg });
+            if (exists) {
+                console.log(`Skipped (already exists): ${s.student_reg}`);
+                skipped++;
+                continue;
+            }
+
+            await Student.create({
+                student_name: s.student_name,
+                student_reg: s.student_reg,
+                student_department: DEPARTMENT_ID,
+                section: SECTION_ID,
+                // team not set
+            });
+            console.log(`Added: ${s.student_reg} - ${s.student_name}`);
+            added++;
+        } catch (err) {
+            console.error(`Failed: ${s.student_reg} - ${err.message}`);
+            failed++;
+        }
+    }
+
+    console.log(`\nDone. Added: ${added}, Skipped: ${skipped}, Failed: ${failed}`);
+
+}
+
 module.exports = {
     createStudent,
     getAllStudents,
@@ -45,4 +83,5 @@ module.exports = {
     updateStudent,
     deleteStudent,
     getStudentByDepartment,
+    Bulk_upload
 };
