@@ -42,3 +42,4 @@ const Team = mongoose.model("team", Team_Schema)
 module.exports = {
     Team
 }
+
