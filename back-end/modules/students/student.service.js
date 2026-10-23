@@ -40,10 +40,10 @@ const updateStudent = (id, data) =>
 const deleteStudent = (id) => Student.findByIdAndDelete(id);
 
 
-const DEPARTMENT_ID = "6ad1ba5bed26f3c3fbd189cb";
+const DEPARTMENT_ID = "6adaf52097a0fb71632fbfb0";
 const SECTION_ID = "6ad1ba74ed26f3c3fbd189cc";
 
-const Bulk_upload = async() => {
+const Bulk_upload = async () => {
 
     let added = 0, skipped = 0, failed = 0;
 
