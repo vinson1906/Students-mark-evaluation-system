@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { BASE_URL } from "../../constant/constant";
+import { api, BASE_URL } from "../../constant/constant";
 
 export const getFaculty = () => {
     return useQuery({
         queryKey: ["get-faculty"],
         queryFn: async () => {
-            const res = await axios.get(`${BASE_URL}/faculty/get`)
+            const res = await api.get(`/faculty/get`)
             const result = res.data
 
             if (Array.isArray(result)) return result
@@ -21,7 +21,7 @@ export const createFaculty = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (data) => {
-            const res = await axios.post(`${BASE_URL}/faculty/create`, data)
+            const res = await api.post(`/faculty/create`, data)
             return res.data
         },
         onSuccess: () => {
@@ -34,7 +34,7 @@ export const updateFaculty = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (data) => {
-            const res = await axios.put(`${BASE_URL}/faculty/update/${data.id}`, data)
+            const res = await api.put(`/faculty/update/${data.id}`, data)
             return res.data
         },
         onSuccess: () => {
@@ -48,7 +48,7 @@ export const deleteFaculty = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (id) => {
-            const res = await axios.delete(`${BASE_URL}/faculty/delete/${id}`)
+            const res = await api.delete(`/faculty/delete/${id}`)
             return res.data
         },
         onSuccess: () => {

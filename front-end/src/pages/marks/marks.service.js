@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { BASE_URL } from "../../constant/constant";
+import { api, BASE_URL } from "../../constant/constant";
 
 
 export const getMarks = () => {
     return useQuery({
         queryKey: ["get-marks"],
         queryFn: async () => {
-            const res = await axios.get(`${BASE_URL}/marks/get`)
+            const res = await api.get(`/marks/get`)
             const result = res.data
 
             if (Array.isArray(result)) return result
@@ -22,7 +22,7 @@ export const createMarks = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (data) => {
-            const res = await axios.post(`${BASE_URL}/marks/create`, data)
+            const res = await api.post(`/marks/create`, data)
             return res.data
         },
         onSuccess: () => {
@@ -35,7 +35,7 @@ export const updateMarks = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (data) => {
-            const res = await axios.put(`${BASE_URL}/marks/update/${data.id}`, data)
+            const res = await api.put(`/marks/update/${data.id}`, data)
             return res.data
         },
         onSuccess: () => {
@@ -48,7 +48,7 @@ export const deleteMarks = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (id) => {
-            const res = await axios.delete(`${BASE_URL}/marks/delete/${id}`)
+            const res = await api.delete(`/marks/delete/${id}`)
             return res.data
         },
         onSuccess: () => {

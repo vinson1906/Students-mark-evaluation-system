@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { BASE_URL } from "../../constant/constant";
+import { api, BASE_URL } from "../../constant/constant";
 
 export const getSection = () => {
     return useQuery({
         queryKey: ["get-section"],
         queryFn: async () => {
-            const data = await axios.get(`${BASE_URL}/section/get`)
+            const data = await api.get(`/section/get`)
             const result = data.data
 
             if (Array.isArray(result)) return result
@@ -24,7 +24,7 @@ export const createSection = () => {
 
     return useMutation({
         mutationFn: async (section) => {
-            const res = await axios.post(`${BASE_URL}/section/create`,
+            const res = await api.post(`/section/create`,
                 section
             )
             return res.data
@@ -46,7 +46,7 @@ export const updateSection = () => {
 
             console.log("inside the service:", data.section);
 
-            const res = await axios.put(`${BASE_URL}/section/update/${data.id}`, data.section)
+            const res = await api.put(`/section/update/${data.id}`, data.section)
             return res.data
         },
         onSuccess: () => {
@@ -62,7 +62,7 @@ export const deleteSection = () => {
     return useMutation({
         mutationFn: async (id) => {
             console.log("id:", id)
-            const res = await axios.delete(`${BASE_URL}/section/delete/${id}`)
+            const res = await api.delete(`/section/delete/${id}`)
             return res.data
         },
         onSuccess: () => {

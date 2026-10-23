@@ -1,7 +1,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { BASE_URL } from "../../constant/constant";
+
+import { api } from "../../constant/constant";
 
 
 
@@ -11,7 +11,7 @@ export const getTeams = () => {
     return useQuery({
         queryKey: ["get-teams"],
         queryFn: async () => {
-            const data = await axios.get(`${BASE_URL}/teams/get`)
+            const data = await api.get(`/teams/get`)
             const result = data.data
 
             if (Array.isArray(result)) return result
@@ -26,7 +26,7 @@ export const createTeams = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (data) => {
-            const res = await axios.post(`${BASE_URL}/teams/create`, data)
+            const res = await api.post(`/teams/create`, data)
             return res.data
         },
         onSuccess: () => {
@@ -39,7 +39,7 @@ export const updateTeams = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (data) => {
-            const res = await axios.put(`${BASE_URL}/teams/update/${data.id}`, data.team)
+            const res = await api.put(`/teams/update/${data.id}`, data.team)
             return res.data
         },
         onSuccess: () => {
@@ -52,11 +52,11 @@ export const deleteTeams = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (id) => {
-            const res = await axios.delete(`${BASE_URL}/teams/delete/${id}`)
+            const res = await api.delete(`/teams/delete/${id}`)
             return res.data
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey:["get-teams"]})
+            queryClient.invalidateQueries({ queryKey: ["get-teams"] })
         }
     })
 }

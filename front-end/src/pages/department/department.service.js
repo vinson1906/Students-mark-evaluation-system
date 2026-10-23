@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { BASE_URL } from "../../constant/constant";
+import {  api } from "../../constant/constant";
 
 // Get all departments
 export const getDepartment = () => {
     return useQuery({
         queryKey: ["get-department"],
         queryFn: async () => {
-            const response = await axios.get(`${BASE_URL}/department/get`);
+            const response = await api.get(`/department/get`);
 
             // Supports either an array or an object containing the array
             const result = response.data;
@@ -30,8 +30,8 @@ export const createDepartment = () => {
         mutationFn: async (department) => {
 
             console.log(department)
-            const response = await axios.post(
-                `${BASE_URL}/department/create`,
+            const response = await api.post(
+                `/department/create`,
                 department
             );
             return response.data;
@@ -48,8 +48,8 @@ export const updateDepartment = () => {
 
     return useMutation({
         mutationFn: async ({ id, department }) => {
-            const response = await axios.put(
-                `${BASE_URL}/department/update/${id}`,
+            const response = await api.put(
+                `/department/update/${id}`,
                 department
             );
             return response.data;
@@ -66,8 +66,8 @@ export const deleteDepartment = () => {
 
     return useMutation({
         mutationFn: async (id) => {
-            const response = await axios.delete(
-                `${BASE_URL}/department/delete/${id}`
+            const response = await api.delete(
+                `/department/delete/${id}`
             );
             return response.data;
         },
