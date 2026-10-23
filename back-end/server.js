@@ -23,7 +23,7 @@ const PORT = process.env.PORT
 
 app.use(
     cors({
-        origin: ["http://localhost:5173", "https://student-mark-evaluvation-sysytem.netlify.app/", "https://students-mark-evaluation-system.onrender.com/api"],
+        origin: ["http://localhost:5173", "https://student-mark-evaluvation-sysytem.netlify.app/", "https://students-mark-evaluation-system.onrender.com/"],
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization"],
     })
