@@ -11,14 +11,26 @@ const TeamRouter = require("./modules/team/team.routes")
 const MarkRouter = require("./modules/marks/marks.routes")
 const LabRouter = require("./modules/lab/lab.routes")
 const facultyRouter = require("./modules/faculty/faculty.routes")
-app.use(express.json());
+const UserRouter = require("./modules/user/user.routes")
+const cookieParser = require("cookie-parser");
+
 app.use(express.urlencoded({ extended: true }));
 
 dotenv.config()
 connectDB()
 
 const PORT = process.env.PORT
-app.use(cors())
+
+app.use(
+    cors({
+        origin: ["http://localhost:5173", "https://student-mark-evaluvation-sysytem.netlify.app/"],
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
+
+app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api", DepartmentRouter)
 app.use("/api/section", SectionRouter)
@@ -27,6 +39,7 @@ app.use("/api/teams", TeamRouter)
 app.use("/api/marks", MarkRouter)
 app.use("/api/labs", LabRouter)
 app.use("/api/faculty", facultyRouter)
+app.use("/api/user", UserRouter)
 
 app.get("/api", (req, res) => {
     res.json({
