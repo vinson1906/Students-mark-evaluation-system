@@ -30,9 +30,13 @@ function Hero() {
     let color;
 
     const Grade = () => {
-        if (percentage > 80) {
-            color = "#22C55E"
+        if (percentage >= 90) {
+            color = "#4DB917"
             return "Grade A"
+        }
+        else if (80 < percentage && percentage < 90) {
+            color = "#22C55E"
+            return "Grade B+"
         }
         else if (80 >= percentage && percentage >= 70) {
             color = "#0D9488"
@@ -110,17 +114,17 @@ function Hero() {
                             </div>
                             <div className='flex gap-2 items-center '>
                                 <p className='w-20'>Lab record</p>
-                                <input type="range" name='record' className='bg-black accent-[#8B85FF] w-48' min={0} max={100} value={progress.record || 0} onChange={handleChange} />
+                                <input type="range" name='record' className='bg-black accent-[#8B85FF] w-48 cursor-pointer' min={0} max={100} value={progress.record || 0} onChange={handleChange} />
                                 <p className='text-sm font-bold font-sans'>{progress.record} / 100</p>
                             </div>
                             <div className='flex gap-2 items-center '>
                                 <p className='w-20'>Viva</p>
-                                <input type="range" className='bg-black accent-[#8B85FF] w-48' min={0} max={100} name='viva' value={progress.viva || 0} onChange={handleChange} />
+                                <input type="range" className='bg-black accent-[#8B85FF] w-48 cursor-pointer' min={0} max={100} name='viva' value={progress.viva || 0} onChange={handleChange} />
                                 <p className='text-sm font-bold font-sans'>{progress.viva} / 100</p>
                             </div>
                             <div className='flex gap-2 items-center '>
                                 <p className='w-20'>Project</p>
-                                <input type="range" className='bg-black accent-[#8B85FF] w-48' name='project' min={0} max={100} value={progress.project || 0} onChange={handleChange} />
+                                <input type="range" className='bg-black accent-[#8B85FF] w-48 cursor-pointer' name='project' min={0} max={100} value={progress.project || 0} onChange={handleChange} />
                                 <p className='text-sm font-bold font-sans'>{progress.project} / 100</p>
                             </div>
                         </div>

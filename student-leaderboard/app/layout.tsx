@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/navbar"
+import LOGO from "@/public/asset/logo.png"
+import FooterPallet from "@/components/footer/footer-pallet";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +26,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href="/asset/favicon.ico" sizes="any" className="invert brightness-0" />
+      </head>
 
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[#0E1130]">
         <Navbar />
         {children}
+        <FooterPallet />
       </body>
     </html>
   );
