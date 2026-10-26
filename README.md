@@ -34,6 +34,7 @@ The system has three main parts:
 -   TanStack Query
 -   Axios
 -   Mantine React Table
+-   JWT-based authentication
 
 ### Student Portal --- Next.js
 
@@ -79,9 +80,9 @@ in this repository.
 
 ``` text
 Students-mark-evaluation-system/
-├── backend/                 # Node.js + Express API
+├── back-end/                 # Node.js + Express API
 ├── front-end/               # Vite + React admin dashboard
-├── student-portal/           # Next.js student-facing portal
+├── student-leaderboard/           # Next.js student-facing portal
 ├── .gitignore
 └── README.md
 ```
@@ -98,7 +99,7 @@ Install the following before running the project:
 
 ## Environment Configuration
 
-Create a `.env` file in the **backend directory**. Add the following
+Create a `.env` file in the **back-end directory**. Add the following
 variables:
 
 ``` env
@@ -210,7 +211,7 @@ Postman.
 ### 4. Run the Student Portal (Next.js)
 
 ``` bash
-cd student-portal
+cd student-leaderboard
 npm install
 npm run dev
 ```
@@ -282,8 +283,3 @@ prefix. Do not put private secrets in frontend environment variables.
 **Joseph Vinson Samuel**
 
 -   GitHub: [vinson1906](https://github.com/vinson1906)
-
-## Repository
-
-[Students Mark Evaluation
-System](https://github.com/vinson1906/Students-mark-evaluation-system)
