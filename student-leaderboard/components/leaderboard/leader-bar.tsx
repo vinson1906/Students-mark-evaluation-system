@@ -1,4 +1,5 @@
 "use client"
+import Link from 'next/link'
 import React, { useState } from 'react'
 
 export default function LeaderBar() {
@@ -7,12 +8,14 @@ export default function LeaderBar() {
 
 
     interface individual {
+        id: string
         rank: number
         student_name: string
         score: string
     }
 
     interface team {
+        id: string
         rank: number
         team_name: string
         avg: string
@@ -26,26 +29,31 @@ export default function LeaderBar() {
     const data: TopBarData = {
         individual: [
             {
+                id: "112",
                 rank: 1,
                 student_name: "vinson",
                 score: "98"
             },
             {
                 rank: 2,
+                id: "113",
                 student_name: "syed",
                 score: "95"
             },
             {
+                id: "114",
                 rank: 3,
                 student_name: "shiranjeevi",
                 score: "90"
             },
             {
+                id: "115",
                 rank: 4,
                 student_name: "suresh",
                 score: "88"
             },
             {
+                id: "116",
                 rank: 5,
                 student_name: "jayanth",
                 score: "85"
@@ -53,26 +61,31 @@ export default function LeaderBar() {
         ],
         team: [
             {
+                id: "T111",
                 rank: 1,
                 team_name: "Team Minato",
                 avg: "98"
             },
             {
+                id: "T112",
                 rank: 2,
                 team_name: "Team Kakashi",
                 avg: "95"
             },
             {
+                id: "T113",
                 rank: 3,
                 team_name: "Team Guy",
                 avg: "90"
             },
             {
+                id: "T114",
                 rank: 4,
                 team_name: "Team Aasuma",
                 avg: "88"
             },
             {
+                id: "T115",
                 rank: 5,
                 team_name: "Team Kuranai",
                 avg: "85"
@@ -130,14 +143,14 @@ export default function LeaderBar() {
                         <div className='flex flex-col'>
                             {
                                 data[selected]?.map((ele: any, i: number) => (
-                                    <div key={i} className='flex justify-center w-full'>
+                                    <Link href={`/${selected == "individual" ? "student" : "team"}/${ele.id}`} key={i} className='flex justify-center w-full'>
                                         <div className='flex justify-evenly p-2 w-full pl-16 gap-16 hover:bg-[#282B5F] cursor-pointer text-white font-medium'>
                                             <p className='w-24'>{ele.rank}</p>
                                             <p className='w-34'>{selected == "individual" ? ele.student_name : ele.team_name}</p>
                                             <p className='w-24'>{selected == "individual" ? ele.score : ele.avg}%</p>
                                         </div>
 
-                                    </div>
+                                    </Link>
 
                                 ))
                             }

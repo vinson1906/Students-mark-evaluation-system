@@ -82,8 +82,8 @@ export default function MarksTable({
                         status === "COMPLETED"
                             ? "green"
                             : status === "PENDING"
-                              ? "yellow"
-                              : "red";
+                                ? "yellow"
+                                : "red";
 
                     return (
                         <Badge

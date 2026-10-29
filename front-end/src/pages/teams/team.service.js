@@ -60,3 +60,18 @@ export const deleteTeams = () => {
         }
     })
 }
+
+export const getTeamsMeta = () => {
+    return useQuery({
+        queryKey: ['team-meta'],
+        queryFn: async () => {
+            const res = await api.get(`/teams/get-meta`)
+            const result = res.data
+
+            if (Array.isArray(result)) return result;
+            if (Array.isArray(result.data)) return result.data;
+
+            return []
+        }
+    })
+}
