@@ -13,6 +13,7 @@ const LabRouter = require("./modules/lab/lab.routes")
 const facultyRouter = require("./modules/faculty/faculty.routes")
 const UserRouter = require("./modules/user/user.routes")
 const cookieParser = require("cookie-parser");
+const LeaderBoardRouter = require("./modules/leaderboard/leaderboard.routes")
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -26,6 +27,8 @@ app.use(
         origin: [
             "http://localhost:5173",
             "https://student-mark-evaluvation-sysytem.netlify.app",
+            "http://localhost:3000",
+            "http://localhost:3001"
         ],
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -44,6 +47,7 @@ app.use("/api/marks", MarkRouter)
 app.use("/api/labs", LabRouter)
 app.use("/api/faculty", facultyRouter)
 app.use("/api/user", UserRouter)
+app.use("/api/leader-board", LeaderBoardRouter)
 
 app.get("/api", (req, res) => {
     res.json({
