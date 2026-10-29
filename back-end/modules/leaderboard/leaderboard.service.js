@@ -1,26 +1,98 @@
-const { Marks } = require("../marks/marks.schema")
-// Convert values stored as strings into numbers.
-const toNumber = (value) => {
-    const number = Number(value);
-    return Number.isFinite(number) ? number : 0;
-};
+const mongoose = require("mongoose");
+const { Marks } = require("../marks/marks.schema");
 
-const slugify = (value = "") =>
-    value
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
+const buildLabMatch = (labId) => {
+    if (!labId) return {};
 
-const getTeamLeaderboardService = async ({ labId } = {}) => {
-    const matchStage = {};
-
-    // Optional filter: show results for one lab only.
-    if (labId) {
-        matchStage.lab = labId;
+    if (!mongoose.Types.ObjectId.isValid(labId)) {
+        throw new Error("Invalid lab ID");
     }
 
-    const records = await Marks.aggregate([
+    return {
+        lab: new mongoose.Types.ObjectId(labId),
+    };
+};
+
+const getTopTeamsService = async ({ labId } = {}) => {
+    const matchStage = buildLabMatch(labId);
+
+    const results = await Marks.aggregate([
+        {
+            $match: matchStage,
+        },
+
+        // Get team details
+        {
+            $lookup: {
+                from: "teams",
+                localField: "team",
+                foreignField: "_id",
+                as: "team",
+            },
+        },
+        {
+            $unwind: "$team",
+        },
+
+        // Calculate each team's average total marks
+        {
+            $group: {
+                _id: "$team._id",
+                team_name: {
+                    $first: "$team.team_name",
+                },
+                team_avg: {
+                    $avg: {
+                        $convert: {
+                            input: "$total_marks",
+                            to: "double",
+                            onError: 0,
+                            onNull: 0,
+                        },
+                    },
+                },
+            },
+        },
+
+        // Highest average first
+        {
+            $sort: {
+                team_avg: -1,
+                _id: 1,
+            },
+        },
+
+        // Only top 5 teams
+        {
+            $limit: 5,
+        },
+
+        // Return only required fields
+        {
+            $project: {
+                _id: 0,
+                id: {
+                    $toString: "$_id",
+                },
+                team_name: 1,
+                team_avg: {
+                    $round: ["$team_avg", 2],
+                },
+            },
+        },
+    ]);
+
+    // Add ranks
+    return results.map((team, index) => ({
+        ...team,
+        rank: index + 1,
+    }));
+};
+
+const getTopStudentsService = async ({ labId } = {}) => {
+    const matchStage = buildLabMatch(labId);
+
+    const results = await Marks.aggregate([
         { $match: matchStage },
 
         {
@@ -34,221 +106,54 @@ const getTeamLeaderboardService = async ({ labId } = {}) => {
         { $unwind: "$student" },
 
         {
-            $lookup: {
-                from: "teams",
-                localField: "team",
-                foreignField: "_id",
-                as: "team",
+            $group: {
+                _id: "$student._id",
+                student_name: {
+                    $first: "$student.student_name",
+                },
+                reg_no: {
+                    $first: "$student.student_reg",
+                },
+                total_marks: {
+                    $avg: {
+                        $convert: {
+                            input: "$total_marks",
+                            to: "double",
+                            onError: 0,
+                            onNull: 0,
+                        },
+                    },
+                },
             },
         },
-        { $unwind: "$team" },
 
         {
-            $lookup: {
-                from: "labs",
-                localField: "lab",
-                foreignField: "_id",
-                as: "lab",
+            $sort: {
+                total_marks: -1,
+                _id: 1,
             },
         },
-        { $unwind: { path: "$lab", preserveNullAndEmptyArrays: true } },
 
-        {
-            $lookup: {
-                from: "sections",
-                localField: "team.section",
-                foreignField: "_id",
-                as: "section",
-            },
-        },
-        { $unwind: { path: "$section", preserveNullAndEmptyArrays: true } },
-
-        {
-            $lookup: {
-                from: "departments",
-                localField: "student.student_department",
-                foreignField: "_id",
-                as: "department",
-            },
-        },
-        { $unwind: { path: "$department", preserveNullAndEmptyArrays: true } },
+        { $limit: 5 },
 
         {
             $project: {
-                _id: 1,
-                student: {
-                    _id: "$student._id",
-                    name: "$student.student_name",
-                    reg_no: "$student.student_reg",
-                },
-                team: {
-                    _id: "$team._id",
-                    name: "$team.team_name",
-                    number: "$team.team_number",
-                    members: "$team.team_members",
-                    project: "$team.project",
-                },
-                section: {
-                    name: "$section.section_name",
-                    department_name: "$department.department_name",
-                },
-                lab: {
-                    _id: "$lab._id",
-                    name: "$lab.lab_name",
-                    maximum_mark: "$lab.maximum_mark",
-                },
-                evaluation: 1,
-                total_marks: 1,
-                maximum_marks: 1,
-                project_status: 1,
-                createdAt: 1,
+                _id: 0,
+                id: { $toString: "$_id" },
+                student_name: 1,
+                reg_no: 1,
+                total_marks: { $round: ["$total_marks", 2] },
             },
         },
     ]);
 
-    // Group marks by team and lab, so marks from different labs
-    // don't accidentally get combined into one leaderboard entry.
-    const groupedTeams = new Map();
-
-    for (const record of records) {
-        const teamId = record.team?._id?.toString();
-        const labKey = record.lab?._id?.toString() ?? "no-lab";
-        const groupKey = `${teamId}-${labKey}`;
-
-        if (!teamId) continue;
-
-        if (!groupedTeams.has(groupKey)) {
-            groupedTeams.set(groupKey, {
-                team: record.team,
-                section: record.section,
-                lab: record.lab,
-                members: [],
-                seenStudents: new Set(),
-            });
-        }
-
-        const group = groupedTeams.get(groupKey);
-        const studentId = record.student?._id?.toString();
-
-        // Only include one mark record per student in a team/lab.
-        if (group.seenStudents.has(studentId)) continue;
-
-        group.seenStudents.add(studentId);
-        group.members.push(record);
-    }
-
-    const results = [];
-
-    for (const group of groupedTeams.values()) {
-        const members = group.members.map((record) => {
-            const evaluation = record.evaluation ?? {};
-
-            /*
-             * IMPORTANT: Update this mapping to match your marking scheme.
-             *
-             * Example mapping:
-             * internal   = practical_execution
-             * lab_record = documendation
-             * viva       = viva
-             * project    = used_html + js_logics + css_responsiveness
-             *
-             * These are illustrative mappings, not verified category definitions.
-             */
-            const internal = toNumber(evaluation.practical_execution);
-            const labRecord = toNumber(evaluation.documendation);
-            const viva = toNumber(evaluation.viva);
-
-            const project =
-                toNumber(evaluation.used_html) +
-                toNumber(evaluation.js_logics) +
-                toNumber(evaluation.css_responsiveness);
-
-            return {
-                name: record.student.name ?? "Unknown Student",
-                reg_no: record.student.reg_no ?? "",
-                marks: {
-                    internal: String(internal),
-                    lab_record: String(labRecord),
-                    viva: String(viva),
-                    project: String(project),
-                    total: String(toNumber(record.total_marks)),
-                },
-                numericMarks: {
-                    internal,
-                    lab_record: labRecord,
-                    viva,
-                    project,
-                    total: toNumber(record.total_marks),
-                },
-            };
-        });
-
-        const evaluatedMembers = members.length;
-
-        const average = (key) =>
-            evaluatedMembers
-                ? members.reduce(
-                    (sum, member) => sum + member.numericMarks[key],
-                    0
-                ) / evaluatedMembers
-                : 0;
-
-        const topScorer = [...members].sort(
-            (a, b) => b.numericMarks.total - a.numericMarks.total
-        )[0];
-
-        const teamMembers = {};
-
-        for (const member of members) {
-            teamMembers[slugify(member.name)] = {
-                reg_no: member.reg_no,
-                marks: member.marks,
-            };
-        }
-
-        results.push({
-            team_name: group.team.name ?? "Unnamed Team",
-            team_avg: average("total").toFixed(2),
-            team_rank: "0", // Assigned after all teams are sorted.
-            members_evaluvated: String(evaluatedMembers),
-            team_no: group.team.number ?? "",
-            top_scorer: {
-                name: topScorer?.name ?? "",
-                score: String(topScorer?.numericMarks.total ?? 0),
-            },
-            section: {
-                department_name: group.section?.department_name ?? "",
-                section_name: group.section?.name ?? "",
-            },
-            project: {
-                title: group.team.project?.title ?? "",
-                project_status:
-                    group.team.project?.project_status ?? "NOT_SUBMITTED",
-                project_link: "",
-                github_link: group.team.project?.github_url ?? "",
-            },
-            team_perfomence: {
-                internal: average("internal").toFixed(2),
-                lab_record: average("lab_record").toFixed(2),
-                viva: average("viva").toFixed(2),
-                project: average("project").toFixed(2),
-            },
-            team_members: teamMembers,
-        });
-    }
-
-    // Highest team average receives rank 1.
-    results.sort(
-        (a, b) => Number(b.team_avg) - Number(a.team_avg)
-    );
-
-    results.forEach((team, index) => {
-        team.team_rank = String(index + 1);
-    });
-
-    return results;
+    return results.map((student, index) => ({
+        ...student,
+        rank: index + 1,
+    }));
 };
 
 module.exports = {
-    getTeamLeaderboardService
-}
+    getTopTeamsService,
+    getTopStudentsService,
+};

@@ -1,14 +1,17 @@
 import { log } from 'console'
+import { get } from 'http'
 import React from 'react'
 
 function TeamPerfomence({ teamPerfomenceData }: any) {
 
 
-    const lab = 63
-    const internal_mark = 70
+    const perfonmence_calc = (num: any, full: number) => {
+        const full_mark = full
+        const geted = Math.round(num)
 
-    const viva = 94
-    const project = 86
+        let sum = geted / full_mark * 100
+        return sum
+    }
 
 
 
@@ -22,13 +25,13 @@ function TeamPerfomence({ teamPerfomenceData }: any) {
                     </p>
                     <div className='status-bar w-[800px] bg-gray-800 h-[7px] rounded-md flex items-center'>
                         <div className={`  bg-amber-300 rounded-md h-full`} style={{
-                            width: `${teamPerfomenceData.internal}%`
+                            width: `${perfonmence_calc(teamPerfomenceData?.internal, 20)}%`
                         }}>
 
                         </div>
                     </div>
                     <p className='text-white pl-10'>
-                        {teamPerfomenceData.internal}/100
+                        {teamPerfomenceData?.internal}/20
                     </p>
                 </div>
                 <div className='flex gap-5 items-center'>
@@ -37,13 +40,13 @@ function TeamPerfomence({ teamPerfomenceData }: any) {
                     </p>
                     <div className='status-bar w-[800px] bg-gray-800 h-[7px] rounded-md flex items-center'>
                         <div className={`  bg-amber-300 rounded-md h-full`} style={{
-                            width: `${teamPerfomenceData.lab_record}%`
+                            width: `${perfonmence_calc(teamPerfomenceData?.lab_record, 20)}%`
                         }}>
 
                         </div>
                     </div>
                     <p className='text-white pl-10'>
-                        {teamPerfomenceData.lab_record}/100
+                        {teamPerfomenceData?.lab_record}/20
                     </p>
                 </div>
                 <div className='flex gap-5 items-center'>
@@ -52,13 +55,13 @@ function TeamPerfomence({ teamPerfomenceData }: any) {
                     </p>
                     <div className='status-bar w-[800px] bg-gray-800 h-[7px] rounded-md flex items-center'>
                         <div className={`   bg-amber-300 rounded-md h-full`} style={{
-                            width: `${teamPerfomenceData.viva}%`
+                            width: `${perfonmence_calc(teamPerfomenceData?.viva, 20)}%`
                         }}>
 
                         </div>
                     </div>
                     <p className='text-white pl-10'>
-                        {teamPerfomenceData.viva}/100
+                        {teamPerfomenceData?.viva}/20
                     </p>
                 </div>
                 <div className='flex gap-5 items-center'>
@@ -67,13 +70,13 @@ function TeamPerfomence({ teamPerfomenceData }: any) {
                     </p>
                     <div className='status-bar w-[800px] bg-gray-800 h-[7px] rounded-md flex items-center'>
                         <div className={`   bg-amber-300 rounded-md h-full`} style={{
-                            width: `${teamPerfomenceData.internal}%`
+                            width: `${perfonmence_calc(teamPerfomenceData?.project, 40)}%`
                         }}>
 
                         </div>
                     </div>
                     <p className='text-white pl-10'>
-                        {teamPerfomenceData.project}/100
+                        {teamPerfomenceData?.project}/40
                     </p>
                 </div>
             </div>

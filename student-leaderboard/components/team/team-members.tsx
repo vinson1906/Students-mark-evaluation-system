@@ -1,26 +1,86 @@
 import React from 'react'
 
-function TeamMembers() {
+function TeamMembers({ teamMembers }: any) {
+
+    const members_name = Object.keys(teamMembers)
+
+    const marks = members_name.map((ele, i) => {
+        console.log(ele)
+        console.log("students internals", teamMembers?.[`${ele}`]?.marks)
+    })
+
     return (
         <div className=''>
             <h1 className='text-2xl font-bold text-white'>Team Members</h1>
-            <div className='flex flex-col '>
-                <div className='header  border-b border-b-gray-600 '>
-                    <div className='flex gap-4 items-center '>
-                        <p className='text-[#C5C8DE] w-[60px]'>Rank</p>
-                        <p className='text-[#C5C8DE] w-[360px]'>Member</p>
-                        <p className='text-[#C5C8DE] w-[150px]'>Internal/100</p>
-                        <p className='text-[#C5C8DE] w-[150px]'>Lab/100</p>
-                        <p className='text-[#C5C8DE] w-[150px]'>Viva/100</p>
-                        <p className='text-[#C5C8DE] w-[150px]'>Project/100</p>
-                        <p className='text-[#C5C8DE] w-[150px]'>Total</p>
-                    </div>
+            <div className="w-full overflow-x-auto rounded-lg border border-gray-700 my-4 ">
+                <table className="w-full min-w-[1100px] border-collapse text-left ">
+                    <thead className="border-b border-gray-700 bg-[#111827]">
+                        <tr>
+                            <th className="w-[60px] px-4 py-4 text-[#C5C8DE] font-medium">
+                                S.No
+                            </th>
+                            <th className="w-[360px] px-4 py-4 text-[#C5C8DE] font-medium">
+                                Member
+                            </th>
+                            <th className="w-[150px] px-4 py-4 text-[#C5C8DE] font-medium">
+                                Internal/20
+                            </th>
+                            <th className="w-[150px] px-4 py-4 text-[#C5C8DE] font-medium">
+                                Lab/20
+                            </th>
+                            <th className="w-[150px] px-4 py-4 text-[#C5C8DE] font-medium">
+                                Viva/20
+                            </th>
+                            <th className="w-[150px] px-4 py-4 text-[#C5C8DE] font-medium">
+                                Project/40
+                            </th>
+                            <th className="w-[150px] px-4 py-4 text-[#C5C8DE] font-medium">
+                                Total
+                            </th>
+                        </tr>
+                    </thead>
 
-                </div>
-                <div className='td'>
+                    <tbody>
+                        {members_name.map((ele, i) => {
+                            const marks = teamMembers[ele]?.marks;
 
-                </div>
+                            return (
+                                <tr
+                                    key={i}
+                                    className="border-b border-gray-700 transition-colors hover:bg-[#1F2937]"
+                                >
+                                    <td className="px-4 py-4 text-[#C5C8DE]">
+                                        {i + 1}
+                                    </td>
 
+                                    <td className="px-4 py-4 text-[#C5C8DE] font-medium">
+                                        {ele}
+                                    </td>
+
+                                    <td className="px-4 py-4 text-[#C5C8DE]">
+                                        {marks?.internal ?? "-"}
+                                    </td>
+
+                                    <td className="px-4 py-4 text-[#C5C8DE]">
+                                        {marks?.lab_record ?? "-"}
+                                    </td>
+
+                                    <td className="px-4 py-4 text-[#C5C8DE]">
+                                        {marks?.viva ?? "-"}
+                                    </td>
+
+                                    <td className="px-4 py-4 text-[#C5C8DE]">
+                                        {marks?.project ?? "-"}
+                                    </td>
+
+                                    <td className="px-4 py-4 text-white font-semibold">
+                                        {marks?.total ?? "-"}
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </div>
         </div>
     )

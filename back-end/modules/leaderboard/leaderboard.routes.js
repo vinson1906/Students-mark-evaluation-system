@@ -1,8 +1,9 @@
-import express from "express";
-import { getTeamLeaderboard } from "../controllers/teamLeaderboardController.js";
+const express = require("express");
+const { getTopTeamLeaderboard, getTopStudents } = require("./leaderboard.controller");
 
-const router = express.Router();
+const LeaderBoardRouter = express.Router();
 
-router.get("/get-team-leaderboard", getTeamLeaderboard);
+LeaderBoardRouter.get("/get-team-leaderboard", getTopTeamLeaderboard);
+LeaderBoardRouter.get("/get-student-leaderboard", getTopStudents)
 
-export default router;
+module.exports = LeaderBoardRouter

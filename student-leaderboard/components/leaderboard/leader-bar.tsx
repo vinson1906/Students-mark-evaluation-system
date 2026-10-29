@@ -1,10 +1,18 @@
 "use client"
 import Link from 'next/link'
 import React, { useState } from 'react'
+import { getTopStudents, getTopTeams } from "./leaderboard.service"
 
 export default function LeaderBar() {
 
     const [selected, setSelected] = useState<string>("individual")
+
+    const { data: topStudents, isLoading: studentsLoading } = getTopStudents()
+    const { data: topTeams, isLoading: teamsLoading } = getTopTeams()
+
+
+    console.log("students and teams:", topStudents, topTeams);
+
 
 
     interface individual {
@@ -27,7 +35,7 @@ export default function LeaderBar() {
     }
 
     const data: TopBarData = {
-        individual: [
+        individual: topStudents ?? [
             {
                 id: "112",
                 rank: 1,
@@ -59,9 +67,9 @@ export default function LeaderBar() {
                 score: "85"
             }
         ],
-        team: [
+        team: topTeams ?? [
             {
-                id: "T111",
+                id: "6ae17e74ebdc4b75a714d709",
                 rank: 1,
                 team_name: "Team Minato",
                 avg: "98"
@@ -117,17 +125,17 @@ export default function LeaderBar() {
 
                             <p className='font-bold text-2xl '>2</p>
                             <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[1].student_name : data.team[1].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[1].score : data.team[1].avg}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(data.individual[1].total_marks) : Math.round(data.team[1].team_avg)}%</p>
                         </div>
                         <div className='h-[180px] w-[100px] bg-[#FFC141] rounded-t-xl flex flex-col pt-2 items-center'>
                             <p className='font-bold text-2xl '>1</p>
                             <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[0].student_name : data.team[0].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[0].score : data.team[0].avg}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(data.individual[0].total_marks) : Math.round(data.team[0].team_avg)}%</p>
                         </div>
                         <div className='h-[90px] w-[100px] bg-[#DA9F6F] rounded-t-xl flex flex-col pt-2 items-center'>
                             <p className='font-bold text-2xl '>3</p>
                             <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[2].student_name : data.team[2].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[2].score : data.team[2].avg}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(data.individual[2].total_marks) : Math.round(data.team[2].team_avg)}%</p>
                         </div>
 
                     </div>
@@ -147,7 +155,7 @@ export default function LeaderBar() {
                                         <div className='flex justify-evenly p-2 w-full pl-16 gap-16 hover:bg-[#282B5F] cursor-pointer text-white font-medium'>
                                             <p className='w-24'>{ele.rank}</p>
                                             <p className='w-34'>{selected == "individual" ? ele.student_name : ele.team_name}</p>
-                                            <p className='w-24'>{selected == "individual" ? ele.score : ele.avg}%</p>
+                                            <p className='w-24'>{selected == "individual" ? Math.round(ele.total_marks) : Math.round(ele.team_avg)}%</p>
                                         </div>
 
                                     </Link>

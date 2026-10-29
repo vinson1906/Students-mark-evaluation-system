@@ -46,7 +46,7 @@ exports.getTeamById = async (req, res) => {
             return res.status(400).json({ message: "Invalid team ID" });
         }
 
-        const team = await service.getTeamById(req.params.id);
+        const team = await service.getTeamDetails(req.params.id);
 
         if (!team) {
             return res.status(404).json({ message: "Team not found" });

@@ -16,10 +16,10 @@ function TopSection({ teamData }: any) {
                 <div className='team-details'>
                     <div className='flex justify-between text-[80px] font-bold font-sans'>
                         <h1>{teamData.team_name}</h1>
-                        <h1 className='text-yellow-400'>{teamData.team_avg}%</h1>
+                        <h1 className='text-yellow-400'>{Math.round(teamData.team_avg)}%</h1>
                     </div>
                     <div className='text-gray-400 flex justify-between text-md mt-2'>
-                        <p>{teamData.section.department_name} · {teamData.section.section_name} · Team number {teamData.team_no}</p>
+                        <p>{teamData?.section?.department_name} · {teamData?.section?.section_name} · Team number {teamData?.team_no}</p>
                         <p className=''>Team average</p>
                     </div>
                 </div>
@@ -44,11 +44,11 @@ function TopSection({ teamData }: any) {
                     </div>
                     <div className='border-r border-r-gray-400 w-40'>
                         <p>Top member</p>
-                        <p className='text-lg font-bold text-white'>{teamData.top_scorer.name} · {teamData.top_scorer.score}%</p>
+                        <p className='text-lg font-bold text-white'>{teamData?.top_scorer?.name} · {teamData?.top_scorer?.score}%</p>
                     </div>
                     <div>
                         <p>Project</p>
-                        <p className='text-lg font-bold text-white'>{teamData.project.project_status}</p>
+                        <p className='text-lg font-bold text-white'>{teamData?.project?.project_status}</p>
                     </div>
 
 
