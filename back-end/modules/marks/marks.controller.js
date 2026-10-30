@@ -156,3 +156,30 @@ exports.deleteMarks = async (req, res) => {
         handleError(res, error);
     }
 };
+
+
+exports.getStudentDetailsController = async (req, res) => {
+    try {
+        const { studentId, labId } = req.params;
+
+        const data = await service.getStudentDetailsService(
+            studentId,
+            labId || null
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Student details fetched successfully",
+            data
+        });
+
+    } catch (error) {
+        console.error("Student Details Controller:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+

@@ -14,11 +14,13 @@ const facultyRouter = require("./modules/faculty/faculty.routes")
 const UserRouter = require("./modules/user/user.routes")
 const cookieParser = require("cookie-parser");
 const LeaderBoardRouter = require("./modules/leaderboard/leaderboard.routes")
+const mongoose = require("mongoose")
 
 app.use(express.urlencoded({ extended: true }));
 
 dotenv.config()
 connectDB()
+
 
 const PORT = process.env.PORT
 
@@ -62,4 +64,5 @@ app.get("/api", (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`server is running on port number: ${PORT}`)
+    console.log("MongoDB readyState:", mongoose.connection.readyState);
 })
