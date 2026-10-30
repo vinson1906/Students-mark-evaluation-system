@@ -19,14 +19,14 @@ export default function LeaderBar() {
         id: string
         rank: number
         student_name: string
-        score: string
+        total_marks: string
     }
 
     interface team {
         id: string
         rank: number
         team_name: string
-        avg: string
+        team_avg: string
     }
 
     interface TopBarData {
@@ -40,31 +40,31 @@ export default function LeaderBar() {
                 id: "112",
                 rank: 1,
                 student_name: "vinson",
-                score: "98"
+                total_marks: "98"
             },
             {
                 rank: 2,
                 id: "113",
                 student_name: "syed",
-                score: "95"
+                total_marks: "95"
             },
             {
                 id: "114",
                 rank: 3,
                 student_name: "shiranjeevi",
-                score: "90"
+                total_marks: "90"
             },
             {
                 id: "115",
                 rank: 4,
                 student_name: "suresh",
-                score: "88"
+                total_marks: "88"
             },
             {
                 id: "116",
                 rank: 5,
                 student_name: "jayanth",
-                score: "85"
+                total_marks: "85"
             }
         ],
         team: topTeams ?? [
@@ -72,31 +72,31 @@ export default function LeaderBar() {
                 id: "6ae17e74ebdc4b75a714d709",
                 rank: 1,
                 team_name: "Team Minato",
-                avg: "98"
+                team_avg: "98"
             },
             {
                 id: "T112",
                 rank: 2,
                 team_name: "Team Kakashi",
-                avg: "95"
+                team_avg: "95"
             },
             {
                 id: "T113",
                 rank: 3,
                 team_name: "Team Guy",
-                avg: "90"
+                team_avg: "90"
             },
             {
                 id: "T114",
                 rank: 4,
                 team_name: "Team Aasuma",
-                avg: "88"
+                team_avg: "88"
             },
             {
                 id: "T115",
                 rank: 5,
                 team_name: "Team Kuranai",
-                avg: "85"
+                team_avg: "85"
             }
         ]
     }
@@ -122,20 +122,19 @@ export default function LeaderBar() {
                 <div className='left max-w-[50%]'>
                     <div className='flex gap-2 items-end justify-center '>
                         <div className='h-[130px] w-[100px] bg-[#C5C8DE] rounded-t-xl flex flex-col pt-2 items-center'>
-
                             <p className='font-bold text-2xl '>2</p>
                             <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[1].student_name : data.team[1].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(data.individual[1].total_marks) : Math.round(data.team[1].team_avg)}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data.individual[1].total_marks)) : Math.round(Number(data.team[1].team_avg))}%</p>
                         </div>
                         <div className='h-[180px] w-[100px] bg-[#FFC141] rounded-t-xl flex flex-col pt-2 items-center'>
                             <p className='font-bold text-2xl '>1</p>
                             <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[0].student_name : data.team[0].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(data.individual[0].total_marks) : Math.round(data.team[0].team_avg)}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data.individual[0].total_marks)) : Math.round(Number(data.team[0].team_avg))}%</p>
                         </div>
                         <div className='h-[90px] w-[100px] bg-[#DA9F6F] rounded-t-xl flex flex-col pt-2 items-center'>
                             <p className='font-bold text-2xl '>3</p>
                             <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[2].student_name : data.team[2].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(data.individual[2].total_marks) : Math.round(data.team[2].team_avg)}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data.individual[2].total_marks)) : Math.round(Number(data.team[2].team_avg))}%</p>
                         </div>
 
                     </div>
