@@ -15,8 +15,8 @@ function KpiCards({ cardsData }: any) {
 
     return (
         <div className='flex justify-evenly gap-4 pb-20'>
-            <div className='w-[350px] h-[120px] bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
-                <div className='bg-[#E3F6F1] w-[80px] h-[80px] rounded-md flex justify-center items-center'>
+            <div className='w-87.5 h-30 bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
+                <div className='bg-[#E3F6F1] w-20 h-20 rounded-md flex justify-center items-center'>
                     <Podium className='text-green-600 text-xl font-bold' />
                 </div>
                 <div>
@@ -26,8 +26,8 @@ function KpiCards({ cardsData }: any) {
                     <p className='text-sm text-gray-500'>Overall marks</p>
                 </div>
             </div>
-            <div className='w-[350px] h-[120px] bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
-                <div className='bg-[#f5f1cf] w-[80px] h-[80px] rounded-md flex justify-center items-center'>
+            <div className='w-87.5 h-30 bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
+                <div className='bg-[#f5f1cf] w-20 h-20 rounded-md flex justify-center items-center'>
                     <Trophy className='text-yellow-600 text-xl font-bold' />
                 </div>
                 <div>
@@ -37,8 +37,8 @@ function KpiCards({ cardsData }: any) {
                     <p className='text-sm text-gray-500'>Individual rank</p>
                 </div>
             </div>
-            <div className='w-[350px] h-[120px] bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
-                <div className='bg-[#e1d4f5] w-[80px] h-[80px] rounded-md flex justify-center items-center'>
+            <div className='w-87.5 h-30 bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
+                <div className='bg-[#e1d4f5] w-20 h-20 rounded-md flex justify-center items-center'>
                     <Users className='text-violet-600 text-xl font-bold' />
                 </div>
                 <div>
@@ -48,8 +48,8 @@ function KpiCards({ cardsData }: any) {
                     <p className='text-sm text-gray-500'>Members evaluvated</p>
                 </div>
             </div>
-            <div className='w-[350px] h-[120px] bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
-                <div className='bg-[#e1d4f5] w-[80px] h-[80px] rounded-md flex justify-center items-center'>
+            <div className='w-87.5 h-30 bg-white shadow-md rounded-2xl flex gap-4 items-center px-4' >
+                <div className='bg-[#e1d4f5] w-20 h-20 rounded-md flex justify-center items-center'>
                     <FolderOpen className='text-violet-600 text-xl font-bold' />
                 </div>
                 <div>

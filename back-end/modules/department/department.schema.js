@@ -8,7 +8,7 @@ const Department_Schema = new mongoose.Schema({
     },
     section: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "section"
+        ref: "sections"
     }],
     code: {
         type: String
@@ -18,7 +18,7 @@ const Department_Schema = new mongoose.Schema({
     timestamps: true
 })
 
-const Department = mongoose.model("department", Department_Schema)
+const Department = mongoose.model("departments", Department_Schema)
 
 module.exports = {
     Department

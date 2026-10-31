@@ -8,7 +8,7 @@ const Section_Schema = new mongoose.Schema({
     },
     department: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "department",
+        ref: "departments",
         require: true
     },
     year: {
@@ -26,7 +26,7 @@ const Section_Schema = new mongoose.Schema({
 })
 
 
-const Section = mongoose.model("section", Section_Schema)
+const Section = mongoose.model("sections", Section_Schema)
 
 module.exports = {
     Section

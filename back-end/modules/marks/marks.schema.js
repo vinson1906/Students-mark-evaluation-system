@@ -29,11 +29,11 @@ const Mark_Schema = new mongoose.Schema({
     },
     team: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "team"
+        ref: "teams"
     },
     lab: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "lab"
+        ref: "labs"
     },
     evaluation: evaluation_Schema,
     total_marks: {
@@ -48,7 +48,7 @@ const Mark_Schema = new mongoose.Schema({
     },
     evaluatedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "faculty"
+        ref: "faculties"
     },
 
 }, {

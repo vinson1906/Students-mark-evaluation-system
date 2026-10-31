@@ -61,7 +61,7 @@ const getStudentDetailsService = async (studentId, labId = null) => {
             // Join Student
             {
                 $lookup: {
-                    from: "students",
+                    from: "Students",
                     localField: "student",
                     foreignField: "_id",
                     as: "student"
@@ -72,7 +72,7 @@ const getStudentDetailsService = async (studentId, labId = null) => {
             // Join Team
             {
                 $lookup: {
-                    from: "teams",
+                    from: "Teams",
                     localField: "team",
                     foreignField: "_id",
                     as: "team"
@@ -88,7 +88,7 @@ const getStudentDetailsService = async (studentId, labId = null) => {
             // Join Section
             {
                 $lookup: {
-                    from: "sections",
+                    from: "Sections",
                     localField: "team.section",
                     foreignField: "_id",
                     as: "section"
@@ -104,7 +104,7 @@ const getStudentDetailsService = async (studentId, labId = null) => {
             // Join Department
             {
                 $lookup: {
-                    from: "departments",
+                    from: "Departments",
                     localField: "section.department",
                     foreignField: "_id",
                     as: "department"
