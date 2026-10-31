@@ -88,7 +88,7 @@ const getTeamDetails = async (id, labId = null) => {
         // Get student details
         {
             $lookup: {
-                from: "students",
+                from: "Students",
                 localField: "student",
                 foreignField: "_id",
                 as: "student",
@@ -104,7 +104,7 @@ const getTeamDetails = async (id, labId = null) => {
         // Get team details
         {
             $lookup: {
-                from: "teams",
+                from: "Teams",
                 localField: "team",
                 foreignField: "_id",
                 as: "team",
@@ -120,7 +120,7 @@ const getTeamDetails = async (id, labId = null) => {
         // Get lab details
         {
             $lookup: {
-                from: "labs",
+                from: "Labs",
                 localField: "lab",
                 foreignField: "_id",
                 as: "lab",
@@ -136,7 +136,7 @@ const getTeamDetails = async (id, labId = null) => {
         // Get section details
         {
             $lookup: {
-                from: "sections",
+                from: "Sections",
                 localField: "team.section",
                 foreignField: "_id",
                 as: "section",
@@ -152,7 +152,7 @@ const getTeamDetails = async (id, labId = null) => {
         // Get department details
         {
             $lookup: {
-                from: "departments",
+                from: "Departments",
                 localField: "student.student_department",
                 foreignField: "_id",
                 as: "department",

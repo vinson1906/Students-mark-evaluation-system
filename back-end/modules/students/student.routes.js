@@ -11,6 +11,6 @@ StudentRouter.get("/get/:id", controller.getStudentById);
 StudentRouter.get("/get/department/:departmentId", controller.getStudentBydepartment);
 StudentRouter.put("/update/:id", authenticateUser, controller.updateStudent);
 StudentRouter.delete("/delete/:id", authenticateUser, controller.deleteStudent);
-StudentRouter.get("/bulk", authenticateUser, controller.BulkUploadController)
+StudentRouter.get("/bulk",  controller.BulkUploadController)
 
 module.exports = StudentRouter;

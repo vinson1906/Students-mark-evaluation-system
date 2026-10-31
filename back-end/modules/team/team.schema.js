@@ -23,7 +23,7 @@ const Team_Schema = new mongoose.Schema({
     },
     section: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "section"
+        ref: "sections"
     },
     team_number: {
         type: String
@@ -37,7 +37,7 @@ const Team_Schema = new mongoose.Schema({
     project: project_Schema
 })
 
-const Team = mongoose.model("team", Team_Schema)
+const Team = mongoose.model("teams", Team_Schema)
 
 module.exports = {
     Team

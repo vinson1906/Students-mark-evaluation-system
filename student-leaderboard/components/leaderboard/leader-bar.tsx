@@ -123,18 +123,18 @@ export default function LeaderBar() {
                     <div className='flex gap-2 items-end justify-center '>
                         <div className='h-[130px] w-[100px] bg-[#C5C8DE] rounded-t-xl flex flex-col pt-2 items-center'>
                             <p className='font-bold text-2xl '>2</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[1].student_name : data.team[1].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data.individual[1].total_marks)) : Math.round(Number(data.team[1].team_avg))}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? data?.individual[1]?.student_name : data?.team[1]?.team_name}</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data?.individual[1]?.total_marks)) : Math.round(Number(data?.team[1]?.team_avg))}%</p>
                         </div>
                         <div className='h-[180px] w-[100px] bg-[#FFC141] rounded-t-xl flex flex-col pt-2 items-center'>
                             <p className='font-bold text-2xl '>1</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[0].student_name : data.team[0].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data.individual[0].total_marks)) : Math.round(Number(data.team[0].team_avg))}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? data?.individual[0]?.student_name : data?.team[0]?.team_name}</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data?.individual[0]?.total_marks)) : Math.round(Number(data?.team[0]?.team_avg))}%</p>
                         </div>
                         <div className='h-[90px] w-[100px] bg-[#DA9F6F] rounded-t-xl flex flex-col pt-2 items-center'>
                             <p className='font-bold text-2xl '>3</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? data.individual[2].student_name : data.team[2].team_name}</p>
-                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data.individual[2].total_marks)) : Math.round(Number(data.team[2].team_avg))}%</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? data?.individual[2]?.student_name : data?.team[2]?.team_name}</p>
+                            <p className='text-sm text-gray-700'>{selected == "individual" ? Math.round(Number(data?.individual[2]?.total_marks)) : Math.round(Number(data?.team[2]?.team_avg))}%</p>
                         </div>
 
                     </div>

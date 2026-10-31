@@ -9,15 +9,15 @@ const Students_Schema = new mongoose.Schema({
     },
     student_department: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "department"
+        ref: "departments"
     },
     section: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "section"
+        ref: "sections"
     },
     team: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "team"
+        ref: "teams"
     }
 })
 

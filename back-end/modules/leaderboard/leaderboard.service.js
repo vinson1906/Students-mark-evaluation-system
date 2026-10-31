@@ -24,7 +24,7 @@ const getTopTeamsService = async ({ labId } = {}) => {
         // Get team details
         {
             $lookup: {
-                from: "teams",
+                from: "Teams",
                 localField: "team",
                 foreignField: "_id",
                 as: "team",
@@ -97,7 +97,7 @@ const getTopStudentsService = async ({ labId } = {}) => {
 
         {
             $lookup: {
-                from: "students",
+                from: "Students",
                 localField: "student",
                 foreignField: "_id",
                 as: "student",

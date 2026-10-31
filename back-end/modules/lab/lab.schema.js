@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const Lab_Schema = new mongoose.Schema({
     department: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "department"
+        ref: "departments"
     },
     lab_name: {
         type: String
@@ -16,7 +16,7 @@ const Lab_Schema = new mongoose.Schema({
     }
 })
 
-const Lab = mongoose.model("lab", Lab_Schema)
+const Lab = mongoose.model("labs", Lab_Schema)
 
 module.exports = {
     Lab
