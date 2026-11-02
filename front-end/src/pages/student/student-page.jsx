@@ -7,6 +7,8 @@ import {
     Group,
 } from "@mantine/core";
 
+import BulkStudentUploadModal from "./bulk-upload"
+
 import StudentsTable from "./student";
 
 import {
@@ -20,19 +22,7 @@ import { getDepartment } from "../department/department.service";
 import { getSection } from "../section/section.service";
 import { getTeams } from "../teams/team.service";
 
-// Team demo data — unchanged until the Team API is ready.
-// const teamOptions = [
-//     {
-//         value: "6acc30001cb9b2b76aa4ff01",
-//         label: "Team Alpha",
-//         sectionId: "6acb10001cb9b2b76aa4ff01",
-//     },
-//     {
-//         value: "6acc30001cb9b2b76aa4ff02",
-//         label: "Team Beta",
-//         sectionId: "6acb10001cb9b2b76aa4ff03",
-//     },
-// ];
+
 
 const emptyForm = {
     student_name: "",
@@ -65,6 +55,8 @@ const getArrayFromResponse = (response) => {
 };
 
 export const StudentPage = () => {
+
+    const [bulkUploadOpened, setBulkUploadOpened] = useState(false);
     // GET students
     const {
         data: studentsResponse,
@@ -391,12 +383,24 @@ export const StudentPage = () => {
                     Student Management
                 </h2>
 
-                <Button
-                    onClick={handleAdd}
-                    disabled={departmentsError || sectionsError}
-                >
-                    Add Student
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="light"
+                        color="green"
+                        leftSection={<span>📊</span>}
+                        onClick={() => setBulkUploadOpened(true)}
+                        disabled={departmentsError || sectionsError}
+                    >
+                        Bulk Upload
+                    </Button>
+
+                    <Button
+                        onClick={handleAdd}
+                        disabled={departmentsError || sectionsError}
+                    >
+                        Add Student
+                    </Button>
+                </div>
             </div>
 
             {/* STUDENTS TABLE */}
@@ -576,6 +580,17 @@ export const StudentPage = () => {
                     </Group>
                 </form>
             </Modal>
+
+            <BulkStudentUploadModal
+                opened={bulkUploadOpened}
+                onClose={() => setBulkUploadOpened(false)}
+                departments={departments}
+                sections={sections}
+                students={students}
+                createMutation={createMutation}
+            />
+
+
 
             {/* DELETE CONFIRMATION */}
             <Modal

@@ -64,3 +64,16 @@ export const deleteStudents = () => {
         }
     })
 }
+
+export const bulkUploadStudents = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async (data) => {
+            const res = await api.post(`/students/bulk-upload`, data)
+            return res.data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["get-students"] })
+        }
+    })
+}
