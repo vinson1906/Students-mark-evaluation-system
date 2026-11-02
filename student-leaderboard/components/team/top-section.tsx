@@ -15,8 +15,8 @@ function TopSection({ teamData }: any) {
             <div className='text-white mt-6'>
                 <div className='team-details'>
                     <div className='flex justify-between text-[80px] font-bold font-sans'>
-                        <h1>{teamData.team_name}</h1>
-                        <h1 className='text-yellow-400'>{Math.round(teamData.team_avg)}%</h1>
+                        <h1>{teamData?.team_name}</h1>
+                        <h1 className='text-yellow-400'>{Math.round(teamData?.team_avg)}%</h1>
                     </div>
                     <div className='text-gray-400 flex justify-between text-md mt-2'>
                         <p>{teamData?.section?.department_name} · {teamData?.section?.section_name} · Team number {teamData?.team_no}</p>
@@ -35,7 +35,7 @@ function TopSection({ teamData }: any) {
                 <div className='head flex justify-around text-gray-500'>
                     <div className='border-r border-r-gray-400 w-40'>
                         <p>Rank</p>
-                        <p className='text-lg font-bold text-white'>{teamData.team_rank} of 4</p>
+                        <p className='text-lg font-bold text-white'>{teamData?.team_rank} of 4</p>
                     </div>
 
                     <div className='border-r border-r-gray-400 w-60'>

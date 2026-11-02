@@ -3,6 +3,7 @@ const { getTopStudentsService, getTopTeamsService } = require("./leaderboard.ser
 const getTopTeamLeaderboard = async (req, res) => {
     try {
         const { labId } = req.query;
+console.log("test");
 
         const data = await getTopTeamsService({ labId });
 

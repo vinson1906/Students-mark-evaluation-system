@@ -86,7 +86,14 @@ exports.getAllStudents = async (req, res) => {
 
 exports.BulkUploadController = async (req, res) => {
     try {
-        res.json({ data: await service.Bulk_upload() });
+        const data = req.body.students;
+        const result = await service.Bulk_upload(data);
+        res.json({
+            message: result.message,
+            added: result.added,
+            skipped: result.skipped,
+            failed: result.failed
+        });
     } catch (error) {
         handleError(res, error);
     }
