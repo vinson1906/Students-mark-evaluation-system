@@ -1,4 +1,4 @@
-const { students } = require("./data");
+
 
 const { Student } = require("./students.schema");
 
@@ -40,40 +40,90 @@ const updateStudent = (id, data) =>
 const deleteStudent = (id) => Student.findByIdAndDelete(id);
 
 
-const DEPARTMENT_ID = "6ae5aa1f05faafd3ba31f2f4";
-const SECTION_ID = "6ae5aa2805faafd3ba31f2f5";
 
-const Bulk_upload = async () => {
 
-    let added = 0, skipped = 0, failed = 0;
+const Bulk_upload = async (students) => {
+    let added = 0;
+    let skipped = 0;
+    let failed = 0;
 
-    for (const s of students) {
-        try {
-            const exists = await Student.findOne({ student_reg: s.student_reg });
-            if (exists) {
-                console.log(`Skipped (already exists): ${s.student_reg}`);
+    console.log("Bulk upload initiated:", students);
+
+    try {
+        const registerNumbers = students.map((s) =>
+            s.student_reg.trim()
+        );
+
+        // 2. Find existing students in a single query
+        const existingStudents = await Student.find({
+            student_reg: { $in: registerNumbers },
+        }).select("student_reg");
+
+        const existingRegs = new Set(
+            existingStudents.map((s) => s.student_reg)
+        );
+
+        const validStudents = [];
+
+        for (const s of students) {
+            if (!s.student_name?.trim() || !s.student_reg?.trim()) {
+                failed++;
+                continue;
+            }
+
+            const reg = s.student_reg.trim();
+
+            if (existingRegs.has(reg)) {
+                console.log(`Skipped (already exists): ${reg}`);
                 skipped++;
                 continue;
             }
 
-            await Student.create({
-                student_name: s.student_name,
-                student_reg: s.student_reg,
-                student_department: DEPARTMENT_ID,
-                section: SECTION_ID,
-                // team not set
+            existingRegs.add(reg);
+
+            validStudents.push({
+                student_name: s.student_name.trim(),
+                student_reg: reg,
+                student_department: s.student_department,
+                section: s.section,
             });
-            console.log(`Added: ${s.student_reg} - ${s.student_name}`);
-            added++;
-        } catch (err) {
-            console.error(`Failed: ${s.student_reg} - ${err.message}`);
-            failed++;
         }
+
+        if (validStudents.length > 0) {
+            const insertedStudents = await Student.insertMany(
+                validStudents,
+                { ordered: false }
+            );
+
+            added = insertedStudents.length;
+        }
+
+        console.log({
+            added,
+            skipped,
+            failed,
+        });
+
+        return {
+            success: true,
+            message: "Bulk upload completed",
+            added,
+            skipped,
+            failed,
+        };
+
+    } catch (err) {
+        console.error("Bulk upload error:", err);
+
+        return {
+            success: false,
+            message: err.message,
+            added,
+            skipped,
+            failed,
+        };
     }
-
-    console.log(`\nDone. Added: ${added}, Skipped: ${skipped}, Failed: ${failed}`);
-
-}
+};
 
 module.exports = {
     createStudent,
