@@ -7,7 +7,7 @@ function StudentDetailsPage() {
 
 
     const data = {
-        "student_name": "ROSHINI J",
+        "student_name": "VINSON MJ",
         "reg_no": "732226AI094",
         "department_code": "",
         "section": "B",
