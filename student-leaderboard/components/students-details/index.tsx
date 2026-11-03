@@ -3,6 +3,7 @@ import StudentTopBar from './sections/student-top-bar'
 import KpiCards from './sections/kpi-cards'
 import Readerbar from './sections/readerbar'
 import ProgressBarSection from './sections/progress-section'
+import ProjectTeamPerfomence from './sections/project-section/project-team'
 
 export default function StudentDetails({ studentData }: any
 
@@ -16,6 +17,7 @@ export default function StudentDetails({ studentData }: any
                 <StudentTopBar student={studentData} />
                 <KpiCards cardsData={studentData} />
                 <ProgressBarSection />
+                <ProjectTeamPerfomence perfomenceData={studentData} />
             </div>
         </div>
     )
