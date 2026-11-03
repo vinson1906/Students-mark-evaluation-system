@@ -12,7 +12,7 @@ const data = [
     {
         subject: "HTML Skills",
         A: 9,
-        fullMark: 20
+        fullMark: 10
     },
     {
         subject: "CSS Skills",
@@ -22,7 +22,7 @@ const data = [
     {
         subject: "JavaScript Skills",
         A: 16,
-        fullMark: 10
+        fullMark: 20
     },
     {
         subject: "Viva",
@@ -32,11 +32,6 @@ const data = [
     {
         subject: "Documentation",
         A: 17,
-        fullMark: 20
-    },
-    {
-        subject: "Record Mark",
-        A: 15,
         fullMark: 20
     }
 ]
