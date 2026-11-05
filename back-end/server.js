@@ -29,6 +29,7 @@ app.use(
         origin: [
             "http://localhost:5173",
             "https://student-mark-evaluvation-sysytem.netlify.app",
+            "https://students-mark-evaluation-system.vercel.app",
             "https://students-mark-evaluation-system.vercel.app/",
             "http://localhost:3000",
             "http://localhost:3001"
