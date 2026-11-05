@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Authendication() {
+export default function Authendication() {
     return (
         <div>
             <h1>Login</h1>
@@ -8,4 +8,4 @@ function Authendication() {
     )
 }
 
-export default Authendication
+
