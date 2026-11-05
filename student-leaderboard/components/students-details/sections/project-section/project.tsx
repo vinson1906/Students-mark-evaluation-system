@@ -8,13 +8,13 @@ function ProjectAndArchivements({ perfomenceData }: any) {
     const logoLetters = (name: any) => {
         console.log(name, "name")
         const nameCaps = name?.split(" ")
-        return nameCaps?.[0]?.[0] + nameCaps?.[1]?.[0];
+        return nameCaps?.[0]?.[0].toUpperCase() + (nameCaps?.[1]?.[0] || nameCaps?.[0]?.[1] ).toUpperCase()
     }
 
     const colors = ['#FFC141', '#3B3E6A', '#1FB5A3', '#21265F', '#393C8A']
 
     return (
-        < div className='w-full flex flex-col gap-4 bg-white max-w-[60%] p-4 my-6 rounded-2xl' >
+        < div className='w-full flex flex-col gap-4 bg-white max-w-[60%] p-4 my-6 rounded-2xl h-[260px]' >
             <div className='w-full flex justify-between items-center'>
                 <h1 className="text-xl font-bold text-gray-400">Current Project</h1>
                 <p className="text-lg font-semibold text-white bg-amber-400 rounded-2xl px-4 py-2">

@@ -1,65 +1,90 @@
 import StudentDetails from '@/components/students-details'
-import React from 'react'
-
-function StudentDetailsPage() {
-
-
+import React, { Suspense } from 'react'
+import { cookies } from 'next/headers'
+import { BASE_URL } from '@/constant/constant'
 
 
-    const data = {
-        "student_name": "VINSON MJ",
-        "reg_no": "732226AI094",
-        "department_code": "",
-        "section": "B",
-        "year": "1",
-        "semester": "2",
-        "rank": "1",
-        "total_avg": "99.00",
-        "grade": "A",
-        "marks": {
-            "practical_exqution": "10",
-            "used_html": "10",
-            "js_logic": "20",
-            "css_responsiveness": "20",
-            "viva": "19",
-            "documendation": "20"
-        },
-        "project": {
-            "project_name": "IPL Stats Website",
-            "github": "https://github.com/vinson1906",
-            "project_status": "PENDING"
-        },
-        "team_perfomence": {
-            "team_id": "6ae3186db2d3477fd875d093",
-            "team_avg": "93.50",
-            "team_name": "CSK",
-            "team_code": "T07",
-            "team_members": [
-                {
-                    "student_id": "6ae07cf27e19a4c2e5583ab6",
-                    "reg_no": "732226AI094",
-                    "student_name": "ROSHINI J",
-                    "rank": "1",
-                    "total_avg": "99.00"
+
+
+
+
+async function StudentDetailsContent({ params }: any) {
+    try {
+        // Access route params inside Suspense
+        const { id } = await params;
+
+        // Read the browser's login cookies on the server
+        const cookieStore = await cookies();
+        const cookieHeader = cookieStore.toString();
+
+        const response = await fetch(
+            `${BASE_URL}/marks/student/${id}`,
+            {
+                method: "GET",
+                headers: {
+                    Cookie: cookieHeader,
                 },
-                {
-                    "student_id": "6ae07cf27e19a4c2e5583ab7",
-                    "reg_no": "732226AI095",
-                    "student_name": "SAMIDURAI T",
-                    "rank": "3",
-                    "total_avg": "88.00"
-                }
-            ]
+                cache: "no-store",
+            }
+        );
+
+        if (response.status === 401) {
+            return (
+                <div className="p-6 text-red-500">
+                    Authentication required. Please log in again.
+                </div>
+            );
         }
+
+        if (!response.ok) {
+            console.error(
+                "Student API error:",
+                response.status,
+                await response.text()
+            );
+
+            return (
+                <div className="p-6 text-red-500">
+                    Failed to load student details.
+                </div>
+            );
+        }
+
+        const result = await response.json();
+        const studentData = result.data ?? result;
+
+        console.log(studentData);
+
+
+        return <StudentDetails studentData={studentData} />;
     }
+    catch (err) {
+        console.error("Error loading student details:", err);
 
-    return (
-        <div>
-            <StudentDetails studentData={data} />
-
-
-        </div>
-    )
+        return (
+            <div className="p-6 text-red-500">
+                Something went wrong while loading student details.
+            </div>
+        );
+    }
 }
 
-export default StudentDetailsPage
+
+
+
+
+export default function StudentDetailsPage({
+    params,
+}:any) {
+    return (
+        <Suspense
+            fallback={
+                <div className="p-6 text-gray-500">
+                    Loading student details...
+                </div>
+            }
+        >
+            <StudentDetailsContent params={params} />
+        </Suspense>
+    );
+}

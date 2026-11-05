@@ -16,7 +16,7 @@ export default function StudentDetails({ studentData }: any
             <div className='max-w-[80%] w-full '>
                 <StudentTopBar student={studentData} />
                 <KpiCards cardsData={studentData} />
-                <ProgressBarSection />
+                <ProgressBarSection marks={studentData.marks} />
                 <ProjectTeamPerfomence perfomenceData={studentData} />
             </div>
         </div>

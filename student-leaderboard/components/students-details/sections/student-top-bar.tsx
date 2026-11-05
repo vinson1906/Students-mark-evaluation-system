@@ -3,6 +3,8 @@ import React from 'react'
 
 function StudentTopBar({ student }: any) {
 
+    console.log(student);
+
     const nameCaps = student?.student_name?.split(" ")
     console.log(nameCaps[0][0]);
 
@@ -14,7 +16,7 @@ function StudentTopBar({ student }: any) {
             <div className='flex items-center h-full px-20 justify-between relative  overflow-hidden '>
                 <div className='flex items-center gap-4 '>
                     <div className='profile-pic h-[110px] w-[110px] rounded-2xl  border border-2 border-yellow-500 flex justify-center items-center' >
-                        <h1 className='text-4xl font-bold text-white'>{nameCaps[0][0]}{nameCaps[1][0]}</h1>
+                        <h1 className='text-4xl font-bold text-white'>{nameCaps[0][0]}{ nameCaps?.length == 2 ? nameCaps[1][0] : nameCaps[0][1] }</h1>
                     </div>
                     <div className='std-details flex flex-col items-start h-[110px] gap-2'>
                         <h1 className='text-4xl font-sans text-white font-bold'>{student?.student_name}.</h1>
@@ -35,8 +37,8 @@ function StudentTopBar({ student }: any) {
 
                 <div className='marks  h-[150px] w-[190px] flex flex-col items-center justify-center gap-2 overflow-hidden relative'>
                    
-                    <h1 className='font-bold text-[#FFC141] text-6xl z-10'>{Math.round(student?.total_avg)}%</h1>
-                    <p className='text-[#C5C8DE] z-10'>{Math.round(student?.total_avg)} / 100 total marks</p>
+                    <h1 className='font-bold text-[#FFC141] text-6xl z-10'>{Math.round(Number(student?.total_avg))}%</h1>
+                    <p className='text-[#C5C8DE] z-10'>{Math.round(Number(student?.total_avg))} / 100 total marks</p>
                 </div>
                  <div className='w-[400px] h-[400px] absolute top-0 bg-[#393C8A] rounded-full right-[-80px] top-[-100px]'></div>
                  <div className='w-[200px] h-[200px] absolute top-0 bg-[#233F70] rounded-full right-[280px] top-[190px]'></div>
