@@ -11,7 +11,7 @@ function Readerbar({ ReaderData }: any) {
     return (
         <div className='w-full h-full '>
             <RadarChart
-                style={{ width: '100%', height: '100%', maxWidth: '680px', maxHeight: '80vh', aspectRatio: 1, cursor: 'pointer', outline: 'none', border: 'none', fill: "#393C8A", outlineColor: 'transparent' }}
+                style={{ width: '100%', height: '100%', maxWidth: '580px', maxHeight: '60vh', aspectRatio: 1, cursor: 'pointer', outline: 'none', border: 'none', fill: "#393C8A", outlineColor: 'transparent' }}
                 className='w-full h-full focus:outline-none'
                 responsive
                 data={ReaderData}

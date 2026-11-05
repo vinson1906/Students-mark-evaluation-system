@@ -5,7 +5,7 @@ const { authenticateUser } = require("../../middleware/authendication")
 
 MarkRouter.post("/create", authenticateUser, controller.createMarks);
 MarkRouter.get("/get", authenticateUser, controller.getAllMarks);
-MarkRouter.get("/get/student/:studentId", authenticateUser, controller.getMarksByStudent);
+// MarkRouter.get("/get/student/:studentId",  controller.getMarksByStudent);
 MarkRouter.get("/get/team/:teamId", authenticateUser, controller.getMarksByTeam);
 MarkRouter.get("/get/lab/:labId", authenticateUser, controller.getMarksByLab);
 MarkRouter.get("/get/:id", authenticateUser, controller.getMarksById);

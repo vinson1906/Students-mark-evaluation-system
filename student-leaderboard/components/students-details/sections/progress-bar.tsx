@@ -4,195 +4,166 @@
 import {
     Pie,
     PieChart,
-    PieLabelRenderProps,
-    PieSectorShapeProps,
-    Sector,
     Tooltip,
-    useActiveTooltipDataPoints,
-    useIsTooltipActive,
-    TooltipContentProps,
-    TooltipIndex,
+    ResponsiveContainer,
+    Cell
 } from "recharts";
-
-
-
-const RADIAN = Math.PI / 180;
 
 const COLORS = [
     "#0088FE",
     "#00C49F",
     "#FFBB28",
-    "#FF8041",
+    "#FF8042",
     "#8884D8",
-    "#FF6384",
-    "red"
+    "#FF6384"
 ];
 
-const CustomTooltip = ({
-    active,
-    payload,
-    label,
-}: TooltipContentProps) => {
-    const firstPayload = payload?.[0];
-    const isVisible = active && firstPayload != null;
+const CustomTooltip = ({ active, payload }: any) => {
+
+    if (!active || !payload?.length) return null;
+
+    const item = payload[0].payload;
 
     return (
-        <div
-            className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-900"
-            style={{
-                visibility: isVisible ? "visible" : "hidden",
-            }}
-        >
-            {isVisible && (
-                <>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {`${label ?? firstPayload.name} : ${firstPayload.value} / ${firstPayload.payload.fullMark}`}
-                    </p>
+        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
 
-                    <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
-                        {String(firstPayload.name ?? "")}
-                    </p>
+            <p className="text-sm font-semibold text-gray-900">
+                {item.name}
+            </p>
 
-                    <p className="mt-1 text-xs text-gray-500">
-                        Student performance breakdown
-                    </p>
-                </>
-            )}
+            <p className="text-sm text-gray-600">
+                Marks: {item.value} / {item.fullMark}
+            </p>
+
+            <p className="text-xs text-gray-400 mt-1">
+                Student performance breakdown
+            </p>
+
         </div>
-    );
-};
-
-const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-}: PieLabelRenderProps) => {
-    if (
-        cx == null ||
-        cy == null ||
-        innerRadius == null ||
-        outerRadius == null
-    ) {
-        return null;
-    }
-
-    const radius =
-        innerRadius + (outerRadius - innerRadius) * 0.5;
-
-    const centerX = Number(cx);
-    const centerY = Number(cy);
-
-    const x =
-        centerX + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-
-    const y =
-        centerY + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
-
-    return (
-        <text
-            x={x}
-            y={y}
-            fill="white"
-            textAnchor={x > centerX ? "start" : "end"}
-            dominantBaseline="central"
-            className="text-xs font-semibold"
-        >
-            {`${((percent ?? 0) * 100).toFixed(0)}%`}
-        </text>
-    );
-};
-
-const MyCustomPie = (props: PieSectorShapeProps) => {
-    const activePoints = useActiveTooltipDataPoints();
-    const isTooltipActive = useIsTooltipActive();
-
-    const isThisPieActive =
-        isTooltipActive &&
-        props.payload === activePoints?.[0]?.payload;
-
-    const fillOpacity =
-        isTooltipActive && !isThisPieActive ? 0.5 : 1;
-
-    return (
-        <Sector
-            {...props}
-            fill={COLORS[(props.index ?? 0) % COLORS.length]}
-            stroke="none"
-            fillOpacity={fillOpacity}
-            style={{ transition: "fill-opacity 0.3s ease" }}
-        />
     );
 };
 
 export default function ProgressPieChart({
     chartData,
-    isAnimationActive = true,
-    defaultIndex,
+    isAnimationActive = true
 }: {
-    chartData: { subject: string; A: number }[];
+    chartData: {
+        subject: string;
+        A: number;
+        fullMark: number;
+    }[];
     isAnimationActive?: boolean;
-    defaultIndex?: TooltipIndex;
 }) {
 
+    // Convert API data into Recharts format
+    const data = chartData
+        .map((item) => ({
+            name: item.subject,
+            value: Number(item.A) || 0,
+            fullMark: Number(item.fullMark) || 0
+        }))
+        .filter(item => item.value > 0);
 
-
-    const data = chartData.map((item: any) => ({
-        name: item.subject,
-        value: item.A,
-        fullMark: item.fullMark,
-    }));
-
-
-
+    const totalMarks = data.reduce(
+        (sum, item) => sum + item.value,
+        0
+    );
 
     return (
-        <div className="w-full bg-white rounded-lg shadow-md p-4 flex gap-4 items-center" >
-            <PieChart
-                style={{
-                    width: "100%",
-                    maxWidth: "500px",
-                    maxHeight: "80vh",
-                    aspectRatio: 1,
-                    cursor: "pointer",
-                }}
-                responsive
-            >
-                <Pie
-                    data={data}
-                    labelLine={false}
-                    label={renderCustomizedLabel}
-                    dataKey="value"
-                    nameKey="name"
-                    isAnimationActive={isAnimationActive}
-                    shape={MyCustomPie}
-                />
+        <div className="w-full bg-white rounded-lg shadow-md p-4">
 
-                <Tooltip
-                    content={CustomTooltip}
-                    isAnimationActive={isAnimationActive}
-                    defaultIndex={defaultIndex}
-                />
-            </PieChart>
-            <div>
-                {
-                    data.map((entry, index) => (
-                        <div key={`legend-${index}`} className="flex items-center mb-2">
+            <h2 className="text-lg font-bold text-gray-800 mb-3">
+                Marks Distribution
+            </h2>
+
+            {totalMarks > 0 ? (
+
+                <div className="w-full flex flex-col md:flex-row items-center gap-4">
+
+                    {/* Pie Chart */}
+                    <div className="w-full md:w-1/2 h-[300px] min-w-0">
+
+                        <ResponsiveContainer width="100%" height="100%">
+
+                            <PieChart>
+
+                                <Pie
+                                    data={data}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius="85%"
+                                    labelLine={false}
+                                    label={({ percent }) =>
+                                        `${((percent || 0) * 100).toFixed(0)}%`
+                                    }
+                                    isAnimationActive={isAnimationActive}
+                                >
+
+                                    {data.map((entry, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={COLORS[index % COLORS.length]}
+                                            stroke="none"
+                                        />
+                                    ))}
+
+                                </Pie>
+
+                                <Tooltip content={<CustomTooltip />} />
+
+                            </PieChart>
+
+                        </ResponsiveContainer>
+
+                    </div>
+
+                    {/* Custom Legend */}
+                    <div className="w-full md:w-1/2">
+
+                        {chartData.map((entry, index) => (
+
                             <div
-                                className="w-4 h-4 mr-2 rounded-full"
-                                style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                            />
-                            <span className="text-sm font-medium">{entry.name}</span>
-                            <span className="ml-2 text-sm text-gray-600">{entry.value}</span>
-                            <span className="ml-1 text-sm text-gray-400">/ {entry.fullMark}</span>
+                                key={`legend-${index}`}
+                                className="flex items-center justify-between gap-2 mb-3"
+                            >
 
-                        </div>
-                    ))
-                }
-            </div>
+                                <div className="flex items-center gap-2 min-w-0">
+
+                                    <div
+                                        className="w-3 h-3 rounded-full shrink-0"
+                                        style={{
+                                            backgroundColor: COLORS[index % COLORS.length]
+                                        }}
+                                    />
+
+                                    <span className="text-sm font-medium text-gray-700">
+                                        {entry.subject}
+                                    </span>
+
+                                </div>
+
+                                <span className="text-sm text-gray-500 whitespace-nowrap">
+                                    {entry.A} / {entry.fullMark}
+                                </span>
+
+                            </div>
+
+                        ))}
+
+                    </div>
+
+                </div>
+
+            ) : (
+
+                <div className="h-[300px] flex items-center justify-center text-gray-400">
+                    No marks available to display
+                </div>
+
+            )}
+
         </div>
-
     );
 }
