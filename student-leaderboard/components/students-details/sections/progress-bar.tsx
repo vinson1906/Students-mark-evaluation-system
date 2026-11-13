@@ -79,9 +79,7 @@ export default function ProgressPieChart({
             {totalMarks > 0 ? (
 
                 <div className="w-full flex flex-col md:flex-row items-center gap-4">
-
-                    {/* Pie Chart */}
-                    <div className="w-full md:w-1/2 h-[300px] min-w-0">
+                    <div className="w-full md:w-1/2 h-75 min-w-0">
 
                         <ResponsiveContainer width="100%" height="100%">
 
@@ -119,7 +117,6 @@ export default function ProgressPieChart({
 
                     </div>
 
-                    {/* Custom Legend */}
                     <div className="w-full md:w-1/2">
 
                         {chartData.map((entry, index) => (
