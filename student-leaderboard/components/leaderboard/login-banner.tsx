@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 function LoginBanner() {
@@ -8,9 +9,9 @@ function LoginBanner() {
                     <h1 className='text-[42px] text-white font-bold'>Ready to see your marks?</h1>
                     <p className='text-[#9EAED4]'>Log in with your registration number to open your dashboard.</p>
                 </div>
-                <div className='text-center '>
+                <Link href={`/auth`} className='text-center '>
                     <button className='h-10 w-20 bg-[#FFB900] font-bold rounded-md cursor-pointer text-center transition-transform duration-200 hover:-translate-y-0.5 hover:bg-amber-600 hover:text-white'>Log in</button>
-                </div>
+                </Link>
 
             </div>
         </div>

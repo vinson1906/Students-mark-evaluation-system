@@ -19,9 +19,9 @@ function Navbar() {
                     <p className="hover:text-white cursor-pointer"> Leaderboard</p>
                     <p className="hover:text-white cursor-pointer">Get started</p>
                 </div>
-                <div className="login-btn hover:pb-2">
+                <Link href={`/auth`} className="login-btn hover:pb-2">
                     <button className="bg-[#FFB627] text-black font-sans font-bold text-sm h-11 flex items-center justify-center cursor-pointer hover:bg-amber-700 w-22 rounded-md p-2">Log in</button>
-                </div>
+                </Link>
             </div>
         </div>
         // </div>
