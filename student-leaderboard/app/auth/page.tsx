@@ -6,7 +6,7 @@ import Loginbackground from "@/public/asset/login-bg.jpg"
 
 export default function Page() {
     return (
-        <div className='h-[90dvh] flex justify-center items-center '>
+        <div className='h-[89dvh] flex justify-center items-center '>
             < LoginPage />
         </div >
     )
