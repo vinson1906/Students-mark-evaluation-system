@@ -43,6 +43,7 @@ The system has three main parts:
 -   TanStack Query
 -   Axios
 -   JWT-based authentication
+-   Recharts (Ui Components)
 
 ## Main Features
 
